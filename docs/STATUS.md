@@ -63,7 +63,17 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `builtinComponents` array + `registerBuiltins(rt)` helper
   - [x] Per-controller state via `WeakMap` (e.g. `gpsSimulator` keeps the simulator handle so `destroy` can stop it)
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [ ] **Phase 7 — Notebook + Dashboard + collab editor** (2 days)
+- [x] **Phase 7 — Notebook + Dashboard + CodeMirror editor** _(done; collab via y-codemirror.next deferred to Phase 11)_
+  - [x] `RuntimeProvider` React context: lazy `Runtime` + `DocStore`, registers built-ins, instantiates demo controllers, wires src bindings, tracks boot status
+  - [x] `useTopologyTick()` hook for components that re-render on topology events
+  - [x] `evalCtx` providing `vg`, `makeMosaicComponent`, `makeVegaLiteComponent`, and `registry` to live-evaluated paragraph code
+  - [x] `defaultDoc.ts` — Iris CSV inline + 4 demo paragraphs (CSV → Filter → Mosaic vgplot bar + Vega-Lite scatter)
+  - [x] `NotebookView` with paragraph cards: header pill + Run button + status footer; CodeMirror 6 editor (one-dark theme + JS syntax)
+  - [x] `DashboardView` with grid of view cards; each slot adopts the `<div class="vis-host">` the runtime owns
+  - [x] Run button: `evaluateParagraph(code, evalCtx)` → register if new → `runtime.hotSwap` → status feedback
+  - [x] Vite dev verified — index, main, runtimeContext, NotebookView all transform; React refresh wired
+  - [x] Ambient `@uwdata/vgplot` declaration so strict TS doesn't fail on the JS-only package
+  - [x] `pnpm typecheck` green; 40 tests still passing
 - [ ] **Phase 8 — Pipeline + Mobile views** (1 day)
 - [ ] **Phase 9 — Canvas + Presentation views** (2 days)
 - [ ] **Phase 10 — Theme + Typewriter + Golem** (1 day)
@@ -82,6 +92,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 4 | DuckDB-WASM + Mosaic Coordinator + SQL templates + GPS simulator; 40 tests passing total. |
 | 2026-04-26 | 5 | Mosaic / Semiotic / Vega-Lite / DOM adapters; no per-chart code. |
 | 2026-04-26 | 6 | 13 built-in components (4 sources / 6 processing / 3 text), all SQL-backed. |
+| 2026-04-26 | 7 | React shell with Notebook (CodeMirror) + Dashboard tabs; demo doc boots end-to-end. |
 
 ## Open notes / decisions
 

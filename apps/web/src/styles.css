@@ -3,8 +3,12 @@
   --vs-fg: #e6e8ee;
   --vs-muted: #8a8f9c;
   --vs-accent: #7aa2ff;
+  --vs-accent-2: #b48cff;
   --vs-card: #181c24;
+  --vs-card-2: #1f2430;
   --vs-border: #2a2f3a;
+  --vs-error: #ff7a8a;
+  --vs-ok: #7be0a3;
 }
 
 * {
@@ -28,38 +32,198 @@ body {
 }
 
 .app {
-  max-width: 880px;
+  max-width: 1200px;
   margin: 0 auto;
-  padding: 48px 24px;
+  padding: 24px 24px 80px;
 }
 
-header h1 {
-  margin: 0 0 4px;
-  font-size: 32px;
+.app-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--vs-border);
+  padding-bottom: 12px;
+}
+
+.app-header h1 {
+  margin: 0;
+  font-size: 24px;
   letter-spacing: -0.02em;
 }
 
-.subtitle {
-  margin: 0 0 32px;
+.tabs {
+  display: flex;
+  gap: 4px;
+}
+
+.tabs button {
+  background: transparent;
+  border: 1px solid var(--vs-border);
+  color: var(--vs-muted);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.15s;
+}
+
+.tabs button:hover {
+  border-color: var(--vs-accent);
+  color: var(--vs-fg);
+}
+
+.tabs button.active {
+  background: var(--vs-accent);
+  color: var(--vs-bg);
+  border-color: var(--vs-accent);
+  font-weight: 500;
+}
+
+.boot {
+  text-align: center;
+  padding: 80px 16px;
   color: var(--vs-muted);
 }
 
-.phase {
+.boot.error pre {
+  text-align: left;
+  background: var(--vs-card);
+  border-left: 4px solid var(--vs-error);
+  padding: 12px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
+
+.muted {
+  color: var(--vs-muted);
+  font-size: 13px;
+}
+
+/* --- Notebook ----------------------------------------------------------- */
+
+.notebook {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.paragraph {
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 12px;
-  padding: 24px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.phase h2 {
-  margin-top: 0;
-  color: var(--vs-accent);
+.paragraph header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--vs-card-2);
+  border-bottom: 1px solid var(--vs-border);
 }
 
-code {
-  background: rgba(122, 162, 255, 0.12);
+.paragraph header h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.pill {
+  display: inline-block;
+  padding: 2px 8px;
+  background: rgba(122, 162, 255, 0.15);
   color: var(--vs-accent);
-  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.run-btn {
+  background: var(--vs-accent);
+  color: var(--vs-bg);
+  border: none;
+  padding: 6px 14px;
   border-radius: 4px;
-  font-size: 0.92em;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.run-btn:hover {
+  background: var(--vs-accent-2);
+}
+
+.cm-host {
+  background: #1a1d24;
+}
+
+.cm-host .cm-editor {
+  min-height: 100px;
+  max-height: 320px;
+  font-size: 13px;
+}
+
+.paragraph footer {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--vs-card-2);
+  border-top: 1px solid var(--vs-border);
+  font-size: 12px;
+  color: var(--vs-muted);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+}
+
+.status-ok {
+  color: var(--vs-ok);
+}
+
+.status-error {
+  color: var(--vs-error);
+}
+
+/* --- Dashboard ---------------------------------------------------------- */
+
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: 16px;
+}
+
+.view-card {
+  background: var(--vs-card);
+  border: 1px solid var(--vs-border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.view-card header {
+  padding: 10px 14px;
+  background: var(--vs-card-2);
+  border-bottom: 1px solid var(--vs-border);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.view-slot {
+  padding: 12px;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vis-host {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vis-host > svg {
+  max-width: 100%;
+  height: auto;
 }
