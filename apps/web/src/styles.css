@@ -1,46 +1,45 @@
-/* Color palette matches karthikbadam.github.io — sharp blacks/whites, chakra
-   gray scale, warm-cream accent in dark mode, classic blue in light. */
+/* High-contrast monochrome palette. Cards share the page background;
+   separation is hairline borders only. No card tints, no shadows. */
 :root,
 :root[data-theme='dark'] {
-  --vs-bg: #171923;          /* gray.900 */
+  --vs-bg: #000000;          /* sharp black */
   --vs-fg: #ffffff;          /* sharp white */
-  --vs-muted: #a0aec0;       /* gray.400 */
+  --vs-muted: #888888;       /* mid gray, readable on black */
   --vs-accent: #dfd0b8;      /* warm cream */
-  --vs-accent-soft: #3a332b; /* warm brown-black accent background */
-  --vs-card: #1a202c;        /* gray.800 */
-  --vs-card-2: #2d3748;      /* gray.700 */
-  --vs-border: #2d3748;      /* gray.700 */
-  --vs-border-strong: #4a5568; /* gray.600 */
-  --vs-error: #fc8181;       /* red.300 */
-  --vs-ok: #9ae6b4;          /* green.300 */
+  --vs-accent-soft: rgba(223, 208, 184, 0.12);
+  --vs-card: #000000;        /* same as bg — separation via border only */
+  --vs-card-2: #0a0a0a;      /* faint elevation for headers/editor only */
+  --vs-border: rgba(255, 255, 255, 0.14);
+  --vs-border-strong: rgba(255, 255, 255, 0.32);
+  --vs-error: #fc8181;
+  --vs-ok: #9ae6b4;
 }
 
 :root[data-theme='light'] {
-  --vs-bg: #ffffff;          /* sharp white */
-  --vs-fg: #171923;          /* gray.900 */
-  --vs-muted: #4a5568;       /* gray.600 */
-  --vs-accent: #2b6cb0;      /* blue.700 */
-  --vs-accent-soft: #f0f5f9; /* subtle blue-grey */
+  --vs-bg: #ffffff;
+  --vs-fg: #000000;
+  --vs-muted: #666666;
+  --vs-accent: #2b6cb0;
+  --vs-accent-soft: rgba(43, 108, 176, 0.08);
   --vs-card: #ffffff;
-  --vs-card-2: #f7fafc;      /* gray.50 */
-  --vs-border: #e2e8f0;      /* gray.200 */
-  --vs-border-strong: #cbd5e0; /* gray.300 */
-  --vs-error: #c53030;       /* red.700 */
-  --vs-ok: #2f855a;          /* green.700 */
+  --vs-card-2: #fafafa;
+  --vs-border: rgba(0, 0, 0, 0.14);
+  --vs-border-strong: rgba(0, 0, 0, 0.32);
+  --vs-error: #c53030;
+  --vs-ok: #2f855a;
 }
 
-/* Auto-pick dark mode if no explicit theme is set and the OS prefers dark. */
 @media (prefers-color-scheme: light) {
   :root:not([data-theme]) {
     --vs-bg: #ffffff;
-    --vs-fg: #171923;
-    --vs-muted: #4a5568;
+    --vs-fg: #000000;
+    --vs-muted: #666666;
     --vs-accent: #2b6cb0;
-    --vs-accent-soft: #f0f5f9;
+    --vs-accent-soft: rgba(43, 108, 176, 0.08);
     --vs-card: #ffffff;
-    --vs-card-2: #f7fafc;
-    --vs-border: #e2e8f0;
-    --vs-border-strong: #cbd5e0;
+    --vs-card-2: #fafafa;
+    --vs-border: rgba(0, 0, 0, 0.14);
+    --vs-border-strong: rgba(0, 0, 0, 0.32);
     --vs-error: #c53030;
     --vs-ok: #2f855a;
   }
@@ -131,14 +130,16 @@ a:hover {
 .header-tools {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 8px;
   justify-self: end;
+  flex-wrap: wrap;
 }
 
 .tabs {
   justify-self: center;
   display: inline-flex;
-  gap: 24px;
+  gap: 20px;
+  flex-wrap: wrap;
 }
 
 .tabs button {
@@ -148,8 +149,8 @@ a:hover {
   padding: 4px 0;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 13px;
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 500;
   border-bottom: 2px solid transparent;
   transition: color 0.15s, border-color 0.15s;
 }
@@ -180,23 +181,25 @@ a:hover {
 
 @media (max-width: 720px) {
   .brand h1 {
-    font-size: 16px;
+    font-size: 15px;
   }
   .brand-sub {
     font-size: 12px;
   }
+  .tabs {
+    gap: 14px;
+  }
   .tabs button {
-    padding: 5px 9px;
     font-size: 11px;
   }
   .header-tools {
-    gap: 4px;
+    gap: 6px;
   }
   .header-tools button,
   .header-tools .reset-btn,
   .file-io button {
-    padding: 5px 8px;
-    font-size: 11px;
+    padding: 3px 7px;
+    font-size: 10px;
   }
   .golem-status,
   .file-io-status {
@@ -210,19 +213,19 @@ a:hover {
 }
 
 .theme-toggle button {
-  width: 30px;
-  height: 30px;
   background: transparent;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  border-radius: 3px;
+  border-radius: 2px;
+  padding: 4px 10px;
   cursor: pointer;
-  font-size: 14px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
   transition: color 0.15s, border-color 0.15s;
 }
 
 .theme-toggle button:hover {
-  color: var(--vs-fg);
   border-color: var(--vs-border-strong);
 }
 
@@ -235,14 +238,15 @@ a:hover {
 
 .golem-snapshot button {
   background: transparent;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  padding: 5px 10px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 2px;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -263,14 +267,15 @@ a:hover {
 
 .reset-btn {
   background: transparent;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  padding: 5px 10px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 2px;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -283,14 +288,15 @@ a:hover {
 
 .file-io button {
   background: transparent;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  padding: 5px 10px;
-  border-radius: 3px;
+  padding: 4px 10px;
+  border-radius: 2px;
   cursor: pointer;
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
   transition: color 0.15s, border-color 0.15s;
 }
 
@@ -378,21 +384,15 @@ a:hover {
 }
 
 .demo-picker select {
-  background: var(--vs-card);
+  background: var(--vs-bg);
   color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  border-radius: 3px;
-  padding: 5px 8px;
+  border-radius: 2px;
+  padding: 4px 8px;
   font-family: 'Poppins', sans-serif;
-  font-size: 12px;
-  cursor: pointer;
-}
-
-.demo-picker label {
   font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   font-weight: 500;
+  cursor: pointer;
 }
 
 .app-header h1 {
@@ -431,25 +431,27 @@ a:hover {
 }
 
 .paragraph {
-  background: var(--vs-card);
+  /* Sharp page-color background — black in dark, white in light. Hairline
+     border is the only separation. */
+  background: var(--vs-bg);
   border: 1px solid var(--vs-border);
-  border-radius: 4px;
+  border-radius: 2px;
   overflow: hidden;
 }
 
 .paragraph header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  background: var(--vs-card);
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--vs-bg);
   border-bottom: 1px solid var(--vs-border);
 }
 
 .paragraph header h3 {
   margin: 0;
   font-family: 'Poppins', sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   flex: 1;
   color: var(--vs-fg);
@@ -457,25 +459,26 @@ a:hover {
 
 .pill {
   display: inline-block;
-  padding: 2px 8px;
-  background: var(--vs-accent-soft);
-  color: var(--vs-accent);
-  border-radius: 3px;
+  padding: 2px 7px;
+  background: transparent;
+  border: 1px solid var(--vs-border);
+  color: var(--vs-muted);
+  border-radius: 2px;
   font-size: 10px;
   font-weight: 500;
   font-family: ui-monospace, SFMono-Regular, monospace;
-  letter-spacing: 0.02em;
+  letter-spacing: 0;
 }
 
 .run-btn {
-  background: var(--vs-fg);
+  background: var(--vs-accent);
   color: var(--vs-bg);
-  border: none;
-  padding: 5px 12px;
-  border-radius: 3px;
+  border: 1px solid var(--vs-accent);
+  padding: 4px 14px;
+  border-radius: 2px;
   font-family: 'Poppins', sans-serif;
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: opacity 0.15s;
 }
@@ -485,13 +488,14 @@ a:hover {
 }
 
 .cm-host {
-  background: var(--vs-card-2);
+  /* Sharp page color — black in dark, white in light. */
+  background: var(--vs-bg);
 }
 
 .cm-host .cm-editor {
-  min-height: 100px;
+  min-height: 80px;
   max-height: 320px;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .paragraph-output {
@@ -523,10 +527,10 @@ a:hover {
 .paragraph footer {
   display: flex;
   justify-content: space-between;
-  padding: 8px 14px;
-  background: var(--vs-card-2);
+  padding: 6px 14px;
+  background: var(--vs-bg);
   border-top: 1px solid var(--vs-border);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--vs-muted);
   font-family: ui-monospace, SFMono-Regular, monospace;
 }
@@ -696,6 +700,9 @@ a:hover {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* vgplot/Plot.js uses currentColor on many text + line elements, so
+     setting color here flows the theme into chart axes/labels. */
+  color: var(--vs-fg);
 }
 
 /* Make every chart shape (svg, vega-embed wrappers, vgplot figures, plain
@@ -707,6 +714,19 @@ a:hover {
   max-width: 100%;
   height: auto;
   display: block;
+}
+
+/* Plot.js / vgplot rendered SVG: axis text uses inline fill="currentColor"
+   in many builds, but tick/domain lines often use fill="none" stroke="currentColor".
+   Make sure both flow through. */
+.vis-host figure svg [aria-label$='axis'] text,
+.vis-host figure svg [aria-label$='axis'] line,
+.vis-host figure svg [aria-label$='axis'] path {
+  color: var(--vs-fg);
+}
+
+.vis-host figure svg [aria-label$='grid'] line {
+  color: var(--vs-border);
 }
 
 .vis-host figure {

@@ -16,31 +16,41 @@ interface CanvasObject {
   rotation: number;
 }
 
-const initialObjects: CanvasObject[] = [
-  ...demoDoc
-    .filter((p) => p.visible !== false)
-    .map((p, i) => ({
-      id: `view-${p.paragraphId}`,
-      kind: 'view' as const,
-      paragraphId: p.paragraphId,
-      x: 40 + (i % 2) * 540,
-      y: 40 + Math.floor(i / 2) * 420,
-      w: 500,
-      h: 380,
-      rotation: 0,
-    })),
-  {
-    id: 'note-1',
-    kind: 'note' as const,
-    markdown:
-      '# Vistrates Canvas\n\nDrag, resize and rotate views. Edit this **markdown** note inline.',
-    x: 1100,
-    y: 40,
-    w: 280,
-    h: 200,
+/** Build the initial layout sized relative to the viewport so the panels
+ *  don't dominate small screens. Each visible paragraph gets a panel
+ *  ~min(420, 42vw) wide and ~280px tall, packed in a 2-column grid. */
+function buildInitialObjects(): CanvasObject[] {
+  const vw = typeof window === 'undefined' ? 1200 : window.innerWidth;
+  const cols = vw < 720 ? 1 : 2;
+  const w = Math.max(280, Math.min(420, Math.round(vw * 0.42)));
+  const h = Math.round(w * 0.6);
+  const gap = 24;
+  const visible = demoDoc.filter((p) => p.visible !== false);
+  const tiles: CanvasObject[] = visible.map((p, i) => ({
+    id: `view-${p.paragraphId}`,
+    kind: 'view' as const,
+    paragraphId: p.paragraphId,
+    x: 24 + (i % cols) * (w + gap),
+    y: 24 + Math.floor(i / cols) * (h + gap),
+    w,
+    h,
     rotation: 0,
-  },
-];
+  }));
+  tiles.push({
+    id: 'note-1',
+    kind: 'note',
+    markdown:
+      '# Canvas\n\nDrag handles to move. Drag the corner to resize. Scroll to pan the world.',
+    x: 24 + cols * (w + gap),
+    y: 24,
+    w: Math.min(260, w * 0.7),
+    h: 160,
+    rotation: 0,
+  });
+  return tiles;
+}
+
+const initialObjects: CanvasObject[] = buildInitialObjects();
 
 export function CanvasView(): JSX.Element {
   const { hostFor } = useRuntime();

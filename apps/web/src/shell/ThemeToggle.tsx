@@ -55,16 +55,7 @@ export function ThemeToggle(): JSX.Element {
           setPref((p) => ({ ...p, theme: p.theme === 'dark' ? 'light' : 'dark' }))
         }
       >
-        {pref.theme === 'dark' ? '☾' : '☀︎'}
-      </button>
-      <button
-        type="button"
-        title="Toggle density"
-        onClick={() =>
-          setPref((p) => ({ ...p, density: p.density === 'comfy' ? 'compact' : 'comfy' }))
-        }
-      >
-        {pref.density === 'comfy' ? '◉' : '◎'}
+        {pref.theme === 'dark' ? 'Light' : 'Dark'}
       </button>
     </div>
   );

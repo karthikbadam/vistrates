@@ -66,7 +66,7 @@ function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
             void onRun();
           }}
         >
-          ▶ Run
+          Run
         </button>
       </header>
       <CodeEditor value={code} onChange={setCode} />

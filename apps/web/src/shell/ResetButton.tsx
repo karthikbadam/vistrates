@@ -39,7 +39,7 @@ export function ResetButton(): JSX.Element {
         void onReset();
       }}
     >
-      ↺ Reset
+      Reset
     </button>
   );
 }

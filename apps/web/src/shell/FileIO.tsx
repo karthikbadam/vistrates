@@ -70,7 +70,7 @@ export function FileIO(): JSX.Element {
         onClick={onSave}
         disabled={status.kind === 'busy'}
       >
-        ⤓ Save
+        Save
       </button>
       <button
         type="button"
@@ -78,7 +78,7 @@ export function FileIO(): JSX.Element {
         onClick={onPickFile}
         disabled={status.kind === 'busy'}
       >
-        ⤒ Load
+        Load
       </button>
       <input
         ref={inputRef}

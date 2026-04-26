@@ -9,15 +9,15 @@ import { typewriterExtension } from './typewriter.js';
 const cssVarTheme = EditorView.theme({
   '&': {
     color: 'var(--vs-fg)',
-    backgroundColor: 'var(--vs-card-2)',
-    fontSize: '13px',
+    backgroundColor: 'var(--vs-bg)',
+    fontSize: '12px',
   },
   '.cm-content': {
     fontFamily: 'ui-monospace, SFMono-Regular, "JetBrains Mono", Menlo, monospace',
     caretColor: 'var(--vs-accent)',
   },
   '.cm-gutters': {
-    backgroundColor: 'var(--vs-card-2)',
+    backgroundColor: 'var(--vs-bg)',
     color: 'var(--vs-muted)',
     border: 'none',
     borderRight: '1px solid var(--vs-border)',

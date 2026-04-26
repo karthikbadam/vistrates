@@ -37,7 +37,7 @@ export function GolemSnapshot(): JSX.Element {
           void onSnapshot();
         }}
       >
-        {status.kind === 'running' ? '⏳' : '📷'} Snapshot
+        Snapshot
       </button>
       {status.message && (
         <span className={`golem-status status-${status.kind}`}>{status.message}</span>

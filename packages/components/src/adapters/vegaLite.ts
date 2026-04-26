@@ -59,6 +59,7 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
       // in the spec.
       const fullSpec: JsonObject = {
         width: 'container',
+        background: 'transparent',
         ...baseSpec,
         data: { values: inlineRows },
       };
@@ -68,6 +69,7 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
       const result = await embed(this.view.element, fullSpec, {
         actions: false,
         renderer: 'svg',
+        config: themedVegaConfig(),
       });
       state.view = result.view;
     },
@@ -85,4 +87,38 @@ function toJsonRows(result: unknown): JsonObject[] {
   const arr = (result as { toArray?: () => unknown }).toArray?.();
   if (Array.isArray(arr)) return arr as JsonObject[];
   return [];
+}
+
+/**
+ * Resolve a theme-aware Vega config from the page's CSS variables. Reads
+ * `--vs-fg`, `--vs-muted`, `--vs-border` off `<html>` so the chart's text,
+ * axis, and grid colors track light/dark.
+ */
+function themedVegaConfig(): JsonObject {
+  if (typeof document === 'undefined') return {};
+  const style = getComputedStyle(document.documentElement);
+  const fg = style.getPropertyValue('--vs-fg').trim() || '#fff';
+  const muted = style.getPropertyValue('--vs-muted').trim() || '#a0a0a0';
+  const border = style.getPropertyValue('--vs-border').trim() || '#262626';
+  return {
+    background: 'transparent',
+    font: 'Poppins, sans-serif',
+    title: { color: fg, font: 'Poppins, sans-serif' },
+    axis: {
+      labelColor: muted,
+      titleColor: fg,
+      domainColor: border,
+      tickColor: border,
+      gridColor: border,
+      labelFont: 'Poppins, sans-serif',
+      titleFont: 'Poppins, sans-serif',
+    },
+    legend: {
+      labelColor: fg,
+      titleColor: fg,
+      labelFont: 'Poppins, sans-serif',
+      titleFont: 'Poppins, sans-serif',
+    },
+    view: { stroke: 'transparent' },
+  };
 }

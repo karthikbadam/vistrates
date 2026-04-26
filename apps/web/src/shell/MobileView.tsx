@@ -32,7 +32,7 @@ export function MobileView(): JSX.Element {
             onClick={() => setIdx((n) => Math.max(0, n - 1))}
             aria-label="previous"
           >
-            ←
+            Prev
           </button>
           <span className="title">
             {current.name}

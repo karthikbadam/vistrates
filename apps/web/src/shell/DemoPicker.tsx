@@ -15,9 +15,8 @@ export function DemoPicker(): JSX.Element {
 
   return (
     <div className="demo-picker">
-      <label htmlFor="demo-select">Demo</label>
       <select
-        id="demo-select"
+        aria-label="Demo"
         value={activeDemo.id}
         onChange={(e) => onChange(e.currentTarget.value)}
       >
