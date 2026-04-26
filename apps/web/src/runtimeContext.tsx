@@ -64,11 +64,12 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
   const evalCtx = useMemo(
     () => ({
       vg,
+      // `Selection` is exposed for advanced users who want bespoke
+      // selections inside a paragraph. The standard linked-selection
+      // pattern is to wire a `crossfilter-selection` paragraph as
+      // `src.selection` on each chart — the runtime resolves the same
+      // Selection instance into every consumer.
       Selection,
-      // A page-wide shared crossfilter Selection. Demos that wire multiple
-      // Mosaic vgplot charts through the same Selection get linked-selection
-      // cross-filtering for free — brushing one chart filters the rest.
-      sharedSelection: Selection.crossfilter(),
       makeMosaicComponent,
       makeVegaLiteComponent,
       registry: Object.fromEntries(builtinComponents.map((d) => [d.id, d])),

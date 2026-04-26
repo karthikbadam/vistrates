@@ -31,13 +31,6 @@ export interface MosaicComponentSpec {
   readonly tags?: readonly string[];
   /** Build the vgplot spec given the bound table name and a per-instance Selection. */
   readonly spec: VgplotSpecBuilder;
-  /**
-   * Optional pre-built `Selection`. When multiple charts share the same
-   * Selection, brushing one cross-filters the others — exactly the
-   * Vistrates "linked selection" pattern. Pass a shared
-   * `Selection.crossfilter()` to opt in.
-   */
-  readonly selection?: Selection;
 }
 
 interface MosaicState {
@@ -76,8 +69,18 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
     props: [],
     init() {
       if (!this.view) return;
+      // Resolve the Selection from the dataflow graph: if `src.selection`
+      // is wired to a `crossfilter-selection` component, use that shared
+      // Selection so brushing this chart cross-filters every sibling
+      // wired to the same node. Otherwise fall back to a per-instance
+      // Selection so the chart still works in isolation.
+      const selSrc = this.src['selection'];
+      const fromGraph =
+        selSrc && selSrc.kind === 'selection'
+          ? (selSrc.selection as Selection | undefined)
+          : undefined;
       const state: MosaicState = {
-        selection: opts.selection ?? Selection.crossfilter(),
+        selection: fromGraph ?? Selection.crossfilter(),
       };
       stateByController.set(this, state);
 
@@ -97,8 +100,8 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
       state.unsubscribe = () => sel.removeEventListener('value', onChange);
 
       // Re-render on host resize so charts fluidly fit their container.
-      // ResizeObserver fires once on attach with the initial size, and again
-      // on any layout change (tab switch, viewport resize, panel drag).
+      // ResizeObserver only fires on actual size changes — NOT on scroll —
+      // so scrolling the page won't cause re-renders or flicker.
       if (typeof ResizeObserver !== 'undefined') {
         state.resizeObserver = new ResizeObserver((entries) => {
           const entry = entries[0];
@@ -108,19 +111,6 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
           state.rerender?.();
         });
         state.resizeObserver.observe(this.view.element);
-      }
-
-      // Belt-and-suspenders: also re-render on a global resize so charts
-      // recover when their host moves between tabs (Dashboard → Canvas)
-      // without the size changing enough to trip the ResizeObserver.
-      if (typeof window !== 'undefined') {
-        const onWinResize = (): void => state.rerender?.();
-        window.addEventListener('resize', onWinResize);
-        const prev = state.unsubscribe;
-        state.unsubscribe = () => {
-          prev?.();
-          window.removeEventListener('resize', onWinResize);
-        };
       }
     },
     async update(_source) {

@@ -272,16 +272,24 @@ const gpsDemo: Demo = {
 
 /**
  * Astronomy demo — 1000-row × 6-column synthetic exoplanet catalog.
- * All 5 charts share the page-wide `sharedSelection` so brushing one
- * cross-filters the others (the canonical Vistrates linked-selection
- * pattern). The scatter plot is the primary brush surface; the histograms
- * + bar chart act as both views and filters.
+ *
+ * The pipeline is:
+ *
+ *   synthetic-exoplanets  →  planets table
+ *                              ↘ (table)
+ *   crossfilter-selection  →  shared Selection
+ *                              ↘ (selection)
+ *   five charts, each consuming both                  → linked brushes
+ *
+ * Brushing any chart cross-filters the others through the shared
+ * Selection — the canonical Vistrates linked-selection pattern,
+ * resolved via the dataflow graph rather than a magic global.
  */
 const exoplanetsDemo: Demo = {
   id: 'exoplanets',
   title: 'Exoplanets',
   description:
-    '1000 synthetic exoplanets, 6 columns. Five linked Mosaic vgplot charts share a crossfilter Selection — brush any chart and the rest filter live.',
+    '1000 synthetic exoplanets, 6 columns. Five Mosaic vgplot charts wired to a single crossfilter-selection node — brush any one and the rest filter live.',
   paragraphs: [
     {
       paragraphId: 'planets-source',
@@ -289,21 +297,37 @@ const exoplanetsDemo: Demo = {
       defId: 'synthetic-exoplanets',
       data: { tableName: 'planets', rows: 1000, seed: 42 },
       visible: false,
-      code: `// Generates 1000 rows × 6 cols (name, host_type, mass_earth, radius_earth,\n// orbital_period_d, discovery_year) directly in DuckDB. Edit data.rows\n// to scale up or down; data.seed makes the catalog reproducible.\nreturn registry['synthetic-exoplanets'];`,
+      code: `// 1000 rows × 6 cols generated directly in DuckDB:
+//   name, host_type, mass_earth, radius_earth,
+//   orbital_period_d, discovery_year
+// Edit data.rows to scale; data.seed makes it reproducible.
+return registry['synthetic-exoplanets'];`,
+    },
+    {
+      paragraphId: 'planets-selection',
+      name: 'Linked selection',
+      defId: 'crossfilter-selection',
+      data: {},
+      visible: false,
+      code: `// A single Selection.crossfilter() shared across every chart on this
+// page. Each chart wires this paragraph as src.selection — the runtime
+// resolves the same Selection instance into all consumers, so brushing
+// one chart cross-filters the rest.
+return registry['crossfilter-selection'];`,
     },
     {
       paragraphId: 'planets-host',
       name: 'Host star type',
       defId: 'demo-planets-host',
       data: {},
-      src: { table: 'planets-source' },
-      code: `// Bar chart of host-star type (M / K / G / F / A). Brushing here
-// cross-filters every other chart on this page via sharedSelection.
+      src: { table: 'planets-source', selection: 'planets-selection' },
+      code: `// Bar of host-star type. Click bars to toggle. The Selection comes
+// in through src.selection, wired up in the dataflow graph above —
+// same instance reaches every other chart on the page.
 return makeMosaicComponent({
   id: 'demo-planets-host',
   name: 'Host star type',
   version: '0.1.0',
-  selection: sharedSelection,
   spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.barY(vg.from(table, { filterBy: selection }), {
@@ -322,13 +346,12 @@ return makeMosaicComponent({
       name: 'Mass vs radius (log–log)',
       defId: 'demo-planets-mr',
       data: {},
-      src: { table: 'planets-source' },
+      src: { table: 'planets-source', selection: 'planets-selection' },
       code: `// Scatter on log axes. Drag a rectangular brush to crossfilter.
 return makeMosaicComponent({
   id: 'demo-planets-mr',
   name: 'Mass vs radius',
   version: '0.1.0',
-  selection: sharedSelection,
   spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.dot(vg.from(table, { filterBy: selection }), {
@@ -353,13 +376,11 @@ return makeMosaicComponent({
       name: 'Orbital period (log)',
       defId: 'demo-planets-period',
       data: {},
-      src: { table: 'planets-source' },
-      code: `// Histogram of orbital period on a log scale.
-return makeMosaicComponent({
+      src: { table: 'planets-source', selection: 'planets-selection' },
+      code: `return makeMosaicComponent({
   id: 'demo-planets-period',
   name: 'Orbital period',
   version: '0.1.0',
-  selection: sharedSelection,
   spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.rectY(vg.from(table, { filterBy: selection }), {
@@ -380,13 +401,11 @@ return makeMosaicComponent({
       name: 'Discoveries by year',
       defId: 'demo-planets-year',
       data: {},
-      src: { table: 'planets-source' },
-      code: `// Yearly discovery count.
-return makeMosaicComponent({
+      src: { table: 'planets-source', selection: 'planets-selection' },
+      code: `return makeMosaicComponent({
   id: 'demo-planets-year',
   name: 'Discoveries by year',
   version: '0.1.0',
-  selection: sharedSelection,
   spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.rectY(vg.from(table, { filterBy: selection }), {
@@ -406,13 +425,11 @@ return makeMosaicComponent({
       name: 'Radius distribution (log)',
       defId: 'demo-planets-radius',
       data: {},
-      src: { table: 'planets-source' },
-      code: `// Radius histogram on log scale.
-return makeMosaicComponent({
+      src: { table: 'planets-source', selection: 'planets-selection' },
+      code: `return makeMosaicComponent({
   id: 'demo-planets-radius',
   name: 'Radius distribution',
   version: '0.1.0',
-  selection: sharedSelection,
   spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.rectY(vg.from(table, { filterBy: selection }), {

@@ -41,7 +41,6 @@ const vgStub = new Proxy({}, { get: () => () => document.createElement('div') })
 const evalCtx = {
   vg: vgStub,
   Selection,
-  sharedSelection: Selection.crossfilter(),
   makeMosaicComponent,
   makeVegaLiteComponent,
   makeSemioticComponent,

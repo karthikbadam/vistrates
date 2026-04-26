@@ -1,9 +1,11 @@
 import type { AnyVisComponentDefinition } from '@vistrates/types';
 import {
+  crossfilterSelectionComponent,
   csvLoaderComponent,
   gpsSimulatorComponent,
   queryableCsvComponent,
   queryableParquetComponent,
+  singleSelectionComponent,
   syntheticExoplanetsComponent,
 } from './sources/index.js';
 import {
@@ -34,6 +36,9 @@ export const builtinComponents: readonly AnyVisComponentDefinition[] = [
   queryableParquetComponent,
   gpsSimulatorComponent,
   syntheticExoplanetsComponent,
+  // selection coordination
+  crossfilterSelectionComponent,
+  singleSelectionComponent,
   // processing
   filterComponent,
   simpleJoinComponent,

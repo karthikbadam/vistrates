@@ -36,7 +36,6 @@ const vgStub = new Proxy({}, { get: () => () => document.createElement('div') })
 const evalCtx = {
   vg: vgStub,
   Selection,
-  sharedSelection: Selection.crossfilter(),
   makeMosaicComponent,
   makeVegaLiteComponent,
   makeSemioticComponent,
@@ -111,11 +110,11 @@ for (const demo of demos) {
       const sources = demo.paragraphs.filter((p) => !p.src);
       for (const src of sources) {
         const ctl = runtime.getController(asComponentId(src.paragraphId));
-        // CSV-loader / queryable-csv / queryable-parquet / gps-simulator all
-        // set `output: { kind: 'table', ... }` in init(). filter-style sources
-        // wait for upstream input — but no demo uses one as a root.
+        // CSV-loader / queryable-csv / queryable-parquet / gps-simulator
+        // emit `table`; crossfilter-selection / single-selection emit
+        // `selection`. Either is a valid root output kind.
         expect(ctl?.output).toBeDefined();
-        expect(ctl?.output?.kind).toBe('table');
+        expect(['table', 'selection']).toContain(ctl?.output?.kind);
       }
     });
 

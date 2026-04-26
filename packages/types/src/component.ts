@@ -13,7 +13,19 @@ export interface TableSchema {
 export type ComponentOutput =
   | { readonly kind: 'table'; readonly tableName: string; readonly schema: TableSchema }
   | { readonly kind: 'clause'; readonly clause: InteractionClause }
-  | { readonly kind: 'value'; readonly value: JsonValue };
+  | { readonly kind: 'value'; readonly value: JsonValue }
+  /**
+   * An opaque cross-component coordination object — typically a Mosaic
+   * `Selection` shared across charts to drive linked highlighting /
+   * cross-filtering. Shape is adapter-specific; visualization adapters
+   * narrow `selection` at the call site.
+   *
+   * This is what makes "shared brushing" a graph edge in Vistrates
+   * rather than a magic global: a `selection` source node is wired into
+   * each chart's `src.selection` slot, and the dataflow resolves it
+   * before init/update.
+   */
+  | { readonly kind: 'selection'; readonly selection: unknown };
 
 export type SrcKindMap = Readonly<Record<string, ComponentOutput['kind']>>;
 export type PropsMap = Readonly<Record<string, unknown>>;

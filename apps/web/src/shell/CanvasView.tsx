@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, type JSX } from 'react';
 import interact from 'interactjs';
 import { marked } from 'marked';
+import { asComponentId } from '@vistrates/types';
 import { demoDoc } from '../defaultDoc.js';
 import { useRuntime, useTopologyTick } from '../runtimeContext.js';
 
@@ -53,14 +54,18 @@ function buildInitialObjects(): CanvasObject[] {
 const initialObjects: CanvasObject[] = buildInitialObjects();
 
 export function CanvasView(): JSX.Element {
-  const { hostFor } = useRuntime();
+  const { hostFor, runtime } = useRuntime();
   const [objects, setObjects] = useState<CanvasObject[]>(initialObjects);
   const elementRefs = useRef(new Map<string, HTMLDivElement>());
   useTopologyTick();
 
   // Mount the runtime's vis-host divs into the corresponding view objects.
+  // When a chart's host is freshly adopted (moved from another tab), ask
+  // the runtime to re-run that controller's update so it repaints into
+  // the new slot — covers the case where dimensions match the previous
+  // slot and ResizeObserver wouldn't otherwise fire.
   useEffect(() => {
-    let movedAny = false;
+    const justAdopted: string[] = [];
     for (const obj of objects) {
       if (obj.kind !== 'view' || !obj.paragraphId) continue;
       const slot = elementRefs.current.get(obj.id);
@@ -69,16 +74,13 @@ export function CanvasView(): JSX.Element {
       const inner = slot.querySelector('.canvas-content');
       if (inner instanceof HTMLElement && host.parentElement !== inner) {
         inner.replaceChildren(host);
-        movedAny = true;
+        justAdopted.push(obj.paragraphId);
       }
     }
-    // Mosaic vgplot's ResizeObserver only re-renders on >4px width change.
-    // Forcing a window resize ensures freshly-adopted charts re-paint into
-    // their new container even when the dimensions happen to match.
-    if (movedAny && typeof window !== 'undefined') {
-      requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
+    for (const id of justAdopted) {
+      void runtime.refresh(asComponentId(id));
     }
-  }, [hostFor, objects]);
+  }, [hostFor, objects, runtime]);
 
   // Wire interactjs once per element appearance.
   useEffect(() => {

@@ -242,6 +242,16 @@ export class Runtime {
     return { nodes, edges };
   }
 
+  /**
+   * Ask a controller to re-run its `update(undefined)` lifecycle method.
+   * Useful when external state (a moved DOM host, a layout change) needs
+   * the chart to repaint without changing any source. No-op if the
+   * controller doesn't exist.
+   */
+  async refresh(id: ComponentId): Promise<void> {
+    await this.#runUpdate(id, undefined);
+  }
+
   // ----- internals -----
 
   #observerSet(id: ComponentId): Set<ComponentId> {
@@ -253,7 +263,7 @@ export class Runtime {
     return set;
   }
 
-  async #runUpdate(id: ComponentId, srcName: string): Promise<void> {
+  async #runUpdate(id: ComponentId, srcName: string | undefined): Promise<void> {
     const controller = this.#controllers.get(id);
     if (!controller) return;
     const def = controller.definition;
