@@ -37,7 +37,16 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `paragraphExec.evaluateParagraph(source, ctx)` — `new Function`, supports `vc = {...}` and `return {...}`, structured `EvalResult`
   - [x] Vitest: runtime (8) + paragraphExec (5) — 28 tests total
   - [x] `pnpm typecheck` green
-- [ ] **Phase 4 — DuckDB-WASM + Mosaic Coordinator** (2 days)
+- [x] **Phase 4 — DuckDB-WASM + Mosaic Coordinator** _(done)_
+  - [x] Added `@duckdb/duckdb-wasm` v1.32, `@uwdata/mosaic-core` v0.16, `@uwdata/mosaic-sql` v0.16, `apache-arrow`
+  - [x] `getCoordinator(opts)` lazy singleton wraps `wasmConnector()`; `query(sql)`, `exec(sql)`
+  - [x] CSV loaders: `loadCsvFromUrl`, `loadCsvFromText` (via `registerFileText`), `describeTable`
+  - [x] Parquet loaders: `loadParquetFromUrl`, `viewParquetFromUrl` (httpfs)
+  - [x] `gpsSimulator.startGpsSimulator(opts)` — agent random walk, INSERTs into a DuckDB table on a tick
+  - [x] SQL templates: `clauseToWhereSql`, `whereSql`, `buildFilterSQL`, `buildSimpleJoinSQL`, `buildGroupBySQL`, `buildDateFilterSQL`, `buildGpsFilterSQL`
+  - [x] Identifier and string-literal escaping (`ident`, `strLit`)
+  - [x] Vitest: 12 sql-template tests (40 total). DuckDB integration is exercised live in Phase 5+.
+  - [x] `pnpm typecheck` green
 - [ ] **Phase 5 — Visualization adapters** (2 days)
 - [ ] **Phase 6 — Source / processing / text components** (2 days)
 - [ ] **Phase 7 — Notebook + Dashboard + collab editor** (2 days)
@@ -56,6 +65,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 1 | Types package complete; clause hash + 9-test suite passing. |
 | 2026-04-26 | 2 | Yjs-backed DocStore + IndexedDB/WebSocket connectors; 6 doc tests passing (15 total). |
 | 2026-04-26 | 3 | Runtime + VisController/View + paragraphExec hot-swap; 28 tests passing total. |
+| 2026-04-26 | 4 | DuckDB-WASM + Mosaic Coordinator + SQL templates + GPS simulator; 40 tests passing total. |
 
 ## Open notes / decisions
 

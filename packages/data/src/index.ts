@@ -1,3 +1,5 @@
-// Phase 4 — DuckDB-WASM facade + Mosaic Coordinator + SQL templates.
-// Stubbed for Phase 0.
-export const PLACEHOLDER = 'data-stub';
+export * from './coordinator.js';
+export * from './csv.js';
+export * from './parquet.js';
+export * from './sqlTemplates.js';
+export * from './gpsSimulator.js';
