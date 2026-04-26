@@ -79,7 +79,12 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `MobileView` 375×700 phone-frame mock with prev/next nav over the demo paragraphs; reuses the same vis-host divs as Dashboard so switching tabs preserves chart state
   - [x] Tab switcher in `App.tsx` covers Dashboard / Notebook / Pipeline / Mobile
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [ ] **Phase 9 — Canvas + Presentation views** (2 days)
+- [x] **Phase 9 — Canvas + Presentation views** _(done)_
+  - [x] `CanvasView` — 2D canvas surface with `interactjs` drag + resize on view tiles and markdown notes; "Add note" toolbar action; double-click to edit a note (rendered via `marked`)
+  - [x] Reuses runtime's `vis-host` divs so charts keep state when moved between Canvas / Dashboard / Mobile / Presentation tabs
+  - [x] `PresentationView` — TraLuver-style 16:9 slide template with title + stage + footer; ←/→/space keyboard navigation
+  - [x] 6-tab shell (Dashboard / Notebook / Pipeline / Canvas / Present / Mobile)
+  - [x] `pnpm typecheck` green; 40 tests still passing
 - [ ] **Phase 10 — Theme + Typewriter + Golem** (1 day)
 - [ ] **Phase 11 — y-websocket collab server + persistence** (1 day)
 - [ ] **Phase 12 — README + reset + error boundaries + CI green** (1 day)
@@ -98,6 +103,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 6 | 13 built-in components (4 sources / 6 processing / 3 text), all SQL-backed. |
 | 2026-04-26 | 7 | React shell with Notebook (CodeMirror) + Dashboard tabs; demo doc boots end-to-end. |
 | 2026-04-26 | 8 | Pipeline (Dagre DAG) + Mobile views; 4-tab shell. |
+| 2026-04-26 | 9 | Canvas (interactjs drag/resize + markdown notes) + Presentation (TraLuver slide); 6-tab shell. |
 
 ## Open notes / decisions
 

@@ -17,6 +17,8 @@
     "@codemirror/view": "^6.36.1",
     "@dagrejs/dagre": "^1.1.4",
     "@uwdata/mosaic-core": "^0.16.0",
+    "interactjs": "^1.10.27",
+    "marked": "^15.0.6",
     "@uwdata/vgplot": "^0.16.0",
     "@vistrates/components": "workspace:*",
     "@vistrates/data": "workspace:*",

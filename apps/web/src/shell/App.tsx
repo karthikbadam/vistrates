@@ -4,8 +4,10 @@ import { NotebookView } from './NotebookView.js';
 import { DashboardView } from './DashboardView.js';
 import { PipelineView } from './PipelineView.js';
 import { MobileView } from './MobileView.js';
+import { CanvasView } from './CanvasView.js';
+import { PresentationView } from './PresentationView.js';
 
-type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'mobile';
+type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'canvas' | 'present' | 'mobile';
 
 function BootGate({ children }: { readonly children: JSX.Element }): JSX.Element {
   const { bootStatus } = useRuntime();
@@ -35,7 +37,7 @@ function Shell(): JSX.Element {
       <header className="app-header">
         <h1>Vistrates</h1>
         <nav className="tabs">
-          {(['dashboard', 'notebook', 'pipeline', 'mobile'] as const).map((t) => (
+          {(['dashboard', 'notebook', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
             <button
               key={t}
               type="button"
@@ -54,6 +56,10 @@ function Shell(): JSX.Element {
           <NotebookView />
         ) : tab === 'pipeline' ? (
           <PipelineView />
+        ) : tab === 'canvas' ? (
+          <CanvasView />
+        ) : tab === 'present' ? (
+          <PresentationView />
         ) : (
           <MobileView />
         )}
