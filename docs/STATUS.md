@@ -29,7 +29,14 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] Browser-only `attachIndexedDB` (y-indexeddb) and `connectWebsocket` (y-websocket) with dynamic imports
   - [x] Vitest: 6/6 (round-trip, paragraph patches, Y.Text replace, two-doc sync via `encodeUpdate`/`applyUpdate`, error on missing paragraph)
   - [x] `pnpm typecheck` green
-- [ ] **Phase 3 — Runtime + paragraph executor** (2 days)
+- [x] **Phase 3 — Runtime + paragraph executor** _(done)_
+  - [x] `TopologyBus` with typed `TopologyEvent` union (registered / unregistered / srcRebound / outputChanged)
+  - [x] `VisViewImpl` with `dom` + `react` modes, `setHTML`, `render`, `moveTo`/`moveBack`, `unmount`
+  - [x] `VisControllerImpl` with typed src/props/config Proxies, output setter that emits topology events, `emitClause` sugar, `swapDefinition` for hot-swap
+  - [x] `Runtime` class: registry, instantiate (init+update), hotSwap (destroy+swap+init+update), destroy (cleans adjacency), bindSrc (with seed update), centralized output→observer router (no per-controller listener leak), topology snapshot
+  - [x] `paragraphExec.evaluateParagraph(source, ctx)` — `new Function`, supports `vc = {...}` and `return {...}`, structured `EvalResult`
+  - [x] Vitest: runtime (8) + paragraphExec (5) — 28 tests total
+  - [x] `pnpm typecheck` green
 - [ ] **Phase 4 — DuckDB-WASM + Mosaic Coordinator** (2 days)
 - [ ] **Phase 5 — Visualization adapters** (2 days)
 - [ ] **Phase 6 — Source / processing / text components** (2 days)
@@ -48,6 +55,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 0 | All package stubs built; `pnpm install` + `pnpm typecheck` + `pnpm dev` all green. |
 | 2026-04-26 | 1 | Types package complete; clause hash + 9-test suite passing. |
 | 2026-04-26 | 2 | Yjs-backed DocStore + IndexedDB/WebSocket connectors; 6 doc tests passing (15 total). |
+| 2026-04-26 | 3 | Runtime + VisController/View + paragraphExec hot-swap; 28 tests passing total. |
 
 ## Open notes / decisions
 
