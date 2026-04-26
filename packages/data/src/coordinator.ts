@@ -18,29 +18,33 @@ export interface CoordinatorOptions {
 export async function getCoordinator(opts: CoordinatorOptions = {}): Promise<Coordinator> {
   if (coord) return coord;
   if (initPromise) return initPromise;
-  initPromise = (async () => {
+  initPromise = Promise.resolve().then(() => {
     const c = new Coordinator();
     const connector = wasmConnector(opts.log === true ? { log: true } : {});
     c.databaseConnector(connector);
     coord = c;
     return c;
-  })();
+  });
   return initPromise;
 }
 
-export type ArrowTable = unknown; // we narrow at the call site with isArrowTable
-export type QueryResult = ArrowTable | { readonly [k: string]: unknown }[];
+/** Arrow table or plain JSON rows — narrow at the call site if needed. */
+export type QueryResult = unknown;
 
 /** Issue a SQL query against the shared coordinator. Returns Arrow by default. */
 export async function query(sql: string): Promise<QueryResult> {
   const c = await getCoordinator();
-  return c.query(sql) as Promise<QueryResult>;
+  return c.query(sql);
 }
 
 /** Execute a SQL statement that doesn't return rows (DDL, INSERT, etc). */
 export async function exec(sql: string | readonly string[]): Promise<void> {
   const c = await getCoordinator();
-  await c.exec(Array.isArray(sql) ? (sql as string[]) : (sql as string));
+  if (typeof sql === 'string') {
+    await c.exec(sql);
+  } else {
+    await c.exec(Array.from(sql));
+  }
 }
 
 /** Reset the coordinator (test/dev only). */

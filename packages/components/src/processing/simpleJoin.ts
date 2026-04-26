@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput } from '@vistrates/types';
+import type { AnyVisComponentDefinition } from '@vistrates/types';
 import { buildSimpleJoinSQL, describeTable, exec } from '@vistrates/data';
 import { asString, readDataObject } from '../dataAccess.js';
 
@@ -20,8 +20,8 @@ export const simpleJoinComponent: AnyVisComponentDefinition = {
   props: [],
   defaultData: { leftKey: 'id', rightKey: 'id', viewName: 'join_out', kind: 'inner' },
   async update(_source) {
-    const left = (this.src as Readonly<Record<string, ComponentOutput | null>>)['left'];
-    const right = (this.src as Readonly<Record<string, ComponentOutput | null>>)['right'];
+    const left = (this.src)['left'];
+    const right = (this.src)['right'];
     if (!left || left.kind !== 'table' || !right || right.kind !== 'table') return;
     const data = readDataObject<SimpleJoinData>(this);
     const leftKey = asString(data.leftKey) ?? 'id';

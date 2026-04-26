@@ -1,7 +1,6 @@
 import type {
   AnyVisComponentDefinition,
   AnyVisController,
-  ComponentOutput,
   JsonObject,
 } from '@vistrates/types';
 
@@ -34,7 +33,7 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
     ...(opts.description !== undefined ? { description: opts.description } : {}),
     src: { table: 'table' as const },
     props: [],
-    async init() {
+    init() {
       if (!this.view) return;
       stateByController.set(this, {});
     },
@@ -43,7 +42,7 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
       const state = stateByController.get(this);
       if (!state) return;
 
-      const tableSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['table'];
+      const tableSrc = (this.src)['table'];
       if (!tableSrc || tableSrc.kind !== 'table') return;
 
       const tableName = tableSrc.tableName;
@@ -62,8 +61,8 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
 
       const embed = (await import('vega-embed')).default;
       state.view?.finalize();
-      const result = await embed(this.view.element, fullSpec as never, { actions: false });
-      state.view = result.view as unknown as { finalize: () => void };
+      const result = await embed(this.view.element, fullSpec, { actions: false });
+      state.view = result.view;
     },
     destroy() {
       const state = stateByController.get(this);

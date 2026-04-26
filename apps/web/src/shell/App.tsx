@@ -8,6 +8,10 @@ import { CanvasView } from './CanvasView.js';
 import { PresentationView } from './PresentationView.js';
 import { ThemeToggle } from './ThemeToggle.js';
 import { GolemSnapshot } from './GolemSnapshot.js';
+import { ResetButton } from './ResetButton.js';
+import { ErrorBoundary } from './ErrorBoundary.js';
+import { DemoPicker } from './DemoPicker.js';
+import { activeDemo } from '../defaultDoc.js';
 
 type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'canvas' | 'present' | 'mobile';
 
@@ -37,9 +41,13 @@ function Shell(): JSX.Element {
   return (
     <main className="app">
       <header className="app-header">
-        <h1>Vistrates</h1>
+        <h1>
+          Vistrates <span className="demo-title">— {activeDemo.title}</span>
+        </h1>
         <div className="header-tools">
+          <DemoPicker />
           <GolemSnapshot />
+          <ResetButton />
           <ThemeToggle />
         </div>
         <nav className="tabs">
@@ -76,8 +84,10 @@ function Shell(): JSX.Element {
 
 export function App(): JSX.Element {
   return (
-    <RuntimeProvider>
-      <Shell />
-    </RuntimeProvider>
+    <ErrorBoundary label="Vistrates shell">
+      <RuntimeProvider>
+        <Shell />
+      </RuntimeProvider>
+    </ErrorBoundary>
   );
 }

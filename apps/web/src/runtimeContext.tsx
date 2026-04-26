@@ -124,7 +124,7 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
               vg.width(640),
               vg.height(360),
               vg.marginLeft(60),
-            ) as Element,
+            ),
         });
         const demoScatter = makeVegaLiteComponent({
           id: 'demo-vegalite-scatter',

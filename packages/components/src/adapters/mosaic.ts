@@ -1,7 +1,6 @@
 import type {
   AnyVisComponentDefinition,
   AnyVisController,
-  ComponentOutput,
   InteractionClause,
 } from '@vistrates/types';
 import { asPredicate } from '@vistrates/types';
@@ -50,7 +49,7 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
     ...(opts.tags !== undefined ? { tags: opts.tags } : {}),
     src: { table: 'table' as const, selection: 'clause' as const },
     props: [],
-    async init() {
+    init() {
       if (!this.view) return;
       const state: MosaicState = { selection: Selection.crossfilter() };
       stateByController.set(this, state);
@@ -75,7 +74,7 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
       const state = stateByController.get(this);
       if (!state) return;
 
-      const tableSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['table'];
+      const tableSrc = (this.src)['table'];
       if (!tableSrc || tableSrc.kind !== 'table') return;
 
       // Re-render the plot.
@@ -141,7 +140,7 @@ function mergeClauses(
     source: componentId,
     clients: [],
     predicate,
-    value: values as unknown as InteractionClause['value'],
+    value: values,
     schema: { kind: 'interval', fields: [] },
   };
 }

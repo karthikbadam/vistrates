@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput } from '@vistrates/types';
+import type { AnyVisComponentDefinition } from '@vistrates/types';
 import { describeTable, exec } from '@vistrates/data';
 import { asNumber, asString, readDataObject } from '../dataAccess.js';
 
@@ -23,7 +23,7 @@ export const tfIdfAccessorComponent: AnyVisComponentDefinition = {
   props: [],
   defaultData: { viewName: 'tfidf_top', topK: 100 },
   async update(_source) {
-    const inSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['in'];
+    const inSrc = (this.src)['in'];
     if (!inSrc || inSrc.kind !== 'table') return;
     const data = readDataObject<TfIdfAccessorData>(this);
     const viewName = asString(data.viewName) ?? 'tfidf_top';

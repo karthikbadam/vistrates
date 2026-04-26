@@ -9,7 +9,7 @@ import type { AnyVisController, JsonValue } from '@vistrates/types';
 export function readDataObject<T>(controller: AnyVisController): Partial<T> {
   const d: JsonValue = controller.data;
   if (d === null || typeof d !== 'object' || Array.isArray(d)) {
-    return {} as Partial<T>;
+    return {};
   }
   return d as unknown as Partial<T>;
 }

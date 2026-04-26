@@ -18,7 +18,7 @@ export interface DomComponentSpec {
   readonly description?: string;
   readonly tags?: readonly string[];
   /** Initial render. Return any state you want kept across updates. */
-  readonly mount: (ctx: DomMountContext) => unknown | Promise<unknown>;
+  readonly mount: (ctx: DomMountContext) => unknown;
   /** Re-render when an upstream source pushes a new output. */
   readonly update?: (
     ctx: DomMountContext & { readonly state: unknown; readonly source: string | undefined },
@@ -86,7 +86,7 @@ export function makeDomComponent(
 function firstUpstream(controller: AnyVisController): ComponentOutput | undefined {
   // Convention: the `in` slot is the primary data input. Adapters that need
   // multiple sources should access `controller.src` directly.
-  const src = controller.src as Readonly<Record<string, ComponentOutput | null>>;
+  const src = controller.src;
   const t = src['in'];
   if (t) return t;
   const c = src['selection'];

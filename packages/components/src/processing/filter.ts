@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput } from '@vistrates/types';
+import type { AnyVisComponentDefinition } from '@vistrates/types';
 import { buildFilterSQL, describeTable, exec } from '@vistrates/data';
 import { asString, readDataObject } from '../dataAccess.js';
 
@@ -20,11 +20,11 @@ export const filterComponent: AnyVisComponentDefinition = {
   props: [],
   defaultData: { viewName: 'filter_out' },
   async update(_source) {
-    const inSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['in'];
+    const inSrc = (this.src)['in'];
     if (!inSrc || inSrc.kind !== 'table') return;
     const data = readDataObject<FilterData>(this);
     const viewName = asString(data.viewName) ?? 'filter_out';
-    const selSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['selection'];
+    const selSrc = (this.src)['selection'];
     const clause = selSrc?.kind === 'clause' ? selSrc.clause : undefined;
     const sql = buildFilterSQL({ fromTable: inSrc.tableName, toTable: viewName, clause });
     await exec(sql);

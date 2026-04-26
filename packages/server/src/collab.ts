@@ -1,13 +1,16 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import type { FastifyInstance } from 'fastify';
 import * as Y from 'yjs';
 
 /** WebSocket-shaped peer the y-websocket utils accept. */
 type WsPeer = unknown;
 
-const DATA_DIR = join(process.cwd(), 'apps/server/data');
+const PKG_ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+
+const DATA_DIR = join(PKG_ROOT, 'data');
 
 interface YWsUtils {
   setupWSConnection: (
@@ -41,8 +44,7 @@ export async function registerCollab(app: FastifyInstance): Promise<void> {
   await mkdir(DATA_DIR, { recursive: true });
 
   // y-websocket/bin/utils is a CJS module; import via dynamic import.
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const utils = (await import(/* @vite-ignore */ 'y-websocket/bin/utils' as any)) as unknown as YWsUtils;
+  const utils = (await import('y-websocket/bin/utils')) as YWsUtils;
 
   utils.setPersistence({
     provider: 'fs',
@@ -81,8 +83,11 @@ export async function registerCollab(app: FastifyInstance): Promise<void> {
   }, 1000);
 
   app.get<{ Params: { doc: string } }>('/collab/:doc', { websocket: true }, (sock, req) => {
-    const params = req.params;
-    const docName = params.doc;
+    // @fastify/websocket v11 may invoke the handler with `req.params` not yet
+    // populated for non-upgrade requests; fall back to parsing the URL.
+    const fromParams = (req.params as { doc?: string } | undefined)?.doc;
+    const fromUrl = (req.url ?? '').split('?')[0]?.split('/').filter(Boolean).pop();
+    const docName = fromParams ?? fromUrl ?? 'default';
     utils.setupWSConnection(sock as WsPeer, { url: `/${docName}` }, { docName });
   });
 }

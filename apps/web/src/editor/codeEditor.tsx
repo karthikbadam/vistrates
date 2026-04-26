@@ -40,7 +40,6 @@ export function CodeEditor({ value, onChange, readOnly = false }: CodeEditorProp
       view.destroy();
       viewRef.current = null;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Sync external value changes (e.g. paragraph reset) without recreating the view.

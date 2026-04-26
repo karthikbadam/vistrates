@@ -1,6 +1,8 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import type * as PlaywrightTypes from 'playwright';
 import { mkdir, writeFile } from 'node:fs/promises';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 interface GolemBody {
   readonly url: string;
@@ -10,7 +12,8 @@ interface GolemBody {
   readonly format?: 'png' | 'pdf';
 }
 
-const SNAPSHOT_DIR = join(process.cwd(), 'apps/server/snapshots');
+const PKG_ROOT = dirname(dirname(fileURLToPath(import.meta.url)));
+const SNAPSHOT_DIR = join(PKG_ROOT, 'snapshots');
 
 /**
  * POST /golem  →  { ok: true, file: string } | { ok: false, error: string }
@@ -32,9 +35,9 @@ export async function registerGolem(app: FastifyInstance): Promise<void> {
     const height = typeof body.viewportHeight === 'number' ? body.viewportHeight : 720;
     const waitMs = typeof body.waitMs === 'number' ? Math.min(10_000, body.waitMs) : 1500;
 
-    let chromium: typeof import('playwright').chromium | undefined;
+    let chromium: typeof PlaywrightTypes.chromium | undefined;
     try {
-      ({ chromium } = (await import('playwright')) as typeof import('playwright'));
+      ({ chromium } = await import('playwright'));
     } catch {
       return reply.code(503).send({
         ok: false,

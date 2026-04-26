@@ -11,7 +11,7 @@ import type {
   SrcKindMap,
   VisView,
 } from '@vistrates/types';
-import { TopologyBus } from './topology.js';
+import type { TopologyBus } from './topology.js';
 
 export interface ControllerOptions {
   readonly id: ComponentId;
@@ -159,7 +159,7 @@ export class VisControllerImpl implements AnyVisController {
   }
 
   #buildSrcProxy(): AnyVisController['src'] {
-    return new Proxy({} as AnyVisController['src'], {
+    return new Proxy({}, {
       get: (_t, key: string | symbol) => {
         if (typeof key !== 'string') return undefined;
         const binding = this.#config.src[key];
@@ -172,7 +172,7 @@ export class VisControllerImpl implements AnyVisController {
   }
 
   #buildPropsProxy(): AnyVisController['props'] {
-    return new Proxy({} as AnyVisController['props'], {
+    return new Proxy({}, {
       get: (_t, key: string | symbol) => {
         if (typeof key !== 'string') return undefined;
         const binding = this.#config.props[key];

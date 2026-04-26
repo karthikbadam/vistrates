@@ -5,7 +5,15 @@ import globals from 'globals';
 
 export default tseslint.config(
   {
-    ignores: ['**/dist/**', '**/node_modules/**', 'legacy/**', '**/*.d.ts'],
+    ignores: [
+      '**/dist/**',
+      '**/node_modules/**',
+      'legacy/**',
+      '**/*.d.ts',
+      'vitest.config.ts',
+      '**/vite.config.ts',
+      'eslint.config.mjs',
+    ],
   },
   js.configs.recommended,
   ...tseslint.configs.recommendedTypeChecked,

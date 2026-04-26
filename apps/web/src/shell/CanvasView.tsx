@@ -66,12 +66,22 @@ export function CanvasView(): JSX.Element {
     for (const obj of objects) {
       const el = elementRefs.current.get(obj.id);
       if (!el) continue;
+      interface InteractMoveEvent {
+        readonly target: HTMLElement;
+        readonly dx: number;
+        readonly dy: number;
+      }
+      interface InteractResizeEvent {
+        readonly target: HTMLElement;
+        readonly rect: { readonly width: number; readonly height: number };
+      }
       const interactable = interact(el)
         .draggable({
           allowFrom: '.canvas-handle',
           listeners: {
-            move(event) {
-              const target = event.target as HTMLElement;
+            move(rawEvent: unknown) {
+              const event = rawEvent as InteractMoveEvent;
+              const target = event.target;
               const x = (parseFloat(target.dataset['x'] ?? '0') || 0) + event.dx;
               const y = (parseFloat(target.dataset['y'] ?? '0') || 0) + event.dy;
               target.style.transform = `translate(${x}px, ${y}px) rotate(${target.dataset['rot'] ?? '0'}deg)`;
@@ -83,8 +93,9 @@ export function CanvasView(): JSX.Element {
         .resizable({
           edges: { left: false, right: true, top: false, bottom: true },
           listeners: {
-            move(event) {
-              const target = event.target as HTMLElement;
+            move(rawEvent: unknown) {
+              const event = rawEvent as InteractResizeEvent;
+              const target = event.target;
               const w = event.rect.width;
               const h = event.rect.height;
               target.style.width = `${w}px`;

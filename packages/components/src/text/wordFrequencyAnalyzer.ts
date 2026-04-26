@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput } from '@vistrates/types';
+import type { AnyVisComponentDefinition } from '@vistrates/types';
 import { describeTable, exec } from '@vistrates/data';
 import { asString, readDataObject } from '../dataAccess.js';
 
@@ -23,7 +23,7 @@ export const wordFrequencyAnalyzerComponent: AnyVisComponentDefinition = {
   props: [],
   defaultData: { column: 'text', viewName: 'word_freq' },
   async update(_source) {
-    const inSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['in'];
+    const inSrc = (this.src)['in'];
     if (!inSrc || inSrc.kind !== 'table') return;
     const data = readDataObject<WordFrequencyData>(this);
     const column = asString(data.column) ?? 'text';

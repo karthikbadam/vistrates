@@ -29,9 +29,9 @@ export function evaluateParagraph(source: string, ctx: EvalContext = {}): EvalRe
   const ctxValues = ctxKeys.map((k) => ctx[k]);
   const wrapper = `'use strict'; let vc; const _result = (function(){ ${source}\n; return typeof vc !== 'undefined' ? vc : undefined; })(); return _result;`;
   try {
-    // eslint-disable-next-line @typescript-eslint/no-implied-eval, @typescript-eslint/no-unsafe-assignment, no-new-func
+    // eslint-disable-next-line @typescript-eslint/no-implied-eval
     const fn = new Function(...ctxKeys, wrapper) as (...args: unknown[]) => unknown;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+     
     const result = fn(...ctxValues);
     if (!isVisComponentDefinition(result)) {
       return {

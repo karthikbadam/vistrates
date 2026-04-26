@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput } from '@vistrates/types';
+import type { AnyVisComponentDefinition } from '@vistrates/types';
 import { buildGpsFilterSQL, describeTable, exec } from '@vistrates/data';
 import { asNumber, asString, readDataObject } from '../dataAccess.js';
 
@@ -31,7 +31,7 @@ export const gpsFilterComponent: AnyVisComponentDefinition = {
     maxLon: 180,
   },
   async update(_source) {
-    const inSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['in'];
+    const inSrc = (this.src)['in'];
     if (!inSrc || inSrc.kind !== 'table') return;
     const data = readDataObject<GpsFilterData>(this);
     const viewName = asString(data.viewName) ?? 'gpsfilter_out';

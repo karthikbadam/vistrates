@@ -126,6 +126,82 @@ body {
   text-overflow: ellipsis;
 }
 
+.reset-btn {
+  background: var(--vs-card-2);
+  color: var(--vs-fg);
+  border: 1px solid var(--vs-border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.reset-btn:hover {
+  border-color: var(--vs-error);
+  color: var(--vs-error);
+}
+
+.error-boundary {
+  background: var(--vs-card);
+  border: 1px solid var(--vs-error);
+  border-radius: 8px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.error-boundary strong {
+  color: var(--vs-error);
+  font-size: 13px;
+}
+
+.error-boundary pre {
+  margin: 0;
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 12px;
+  background: rgba(255, 122, 138, 0.08);
+  padding: 8px;
+  border-radius: 4px;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.error-boundary button {
+  align-self: flex-start;
+  background: var(--vs-error);
+  color: var(--vs-bg);
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.demo-title {
+  color: var(--vs-muted);
+  font-weight: 400;
+  font-size: 18px;
+}
+
+.demo-picker {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--vs-muted);
+}
+
+.demo-picker select {
+  background: var(--vs-card);
+  color: var(--vs-fg);
+  border: 1px solid var(--vs-border);
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 12px;
+}
+
 .app-header h1 {
   margin: 0;
   font-size: 24px;
@@ -320,13 +396,56 @@ body {
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
   border-radius: 8px;
-  padding: 12px;
-  overflow: auto;
+  padding: 0;
+  overflow: hidden;
+  height: 600px;
 }
 
-.pipeline-canvas svg .node text {
-  pointer-events: none;
-  user-select: none;
+.rf-canvas .react-flow__renderer,
+.rf-canvas .react-flow {
+  background: var(--vs-bg);
+}
+
+.rf-node {
+  background: var(--vs-card);
+  border: 1px solid var(--vs-accent);
+  border-radius: 8px;
+  padding: 10px 14px;
+  min-width: 180px;
+  text-align: center;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.rf-node-label {
+  color: var(--vs-fg);
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.rf-node-defid {
+  color: var(--vs-muted);
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+}
+
+.rf-canvas .react-flow__edge-text {
+  fill: var(--vs-muted);
+  font-size: 10px;
+}
+
+.rf-canvas .react-flow__edge-textbg {
+  fill: var(--vs-bg);
+}
+
+.rf-canvas .react-flow__controls button {
+  background: var(--vs-card);
+  color: var(--vs-fg);
+  border-bottom: 1px solid var(--vs-border);
+}
+
+.rf-canvas .react-flow__minimap {
+  background-color: var(--vs-card-2);
 }
 
 /* --- Mobile ------------------------------------------------------------- */

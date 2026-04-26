@@ -68,6 +68,6 @@ export const typewriter: readonly KeyBinding[] = [
   },
 ];
 
-export const typewriterExtension = keymap.of(typewriter as KeyBinding[]);
+export const typewriterExtension = keymap.of(typewriter);
 
 export const SNIPPET_TRIGGERS = Object.keys(SNIPPETS);

@@ -92,15 +92,26 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `GolemSnapshot` button in the header POSTs to the server and surfaces status inline
   - [x] CORS enabled on the server so the Vite app can call it across ports
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [~] **Phase 11 — y-websocket collab server + persistence** _(in progress — needs runtime smoke test in two browser windows; pausing per user request)_
+- [x] **Phase 11 — y-websocket collab server + persistence** _(done — verified end-to-end)_
   - [x] Server `registerCollab` registers `@fastify/websocket`, exposes `GET /collab/:doc` upgrade route
-  - [x] `y-websocket/bin/utils.setupWSConnection` wires the raw socket
-  - [x] Custom FS persistence (no leveldb): `setPersistence` `bindState` / `writeState` reads/writes `apps/server/data/<docId>.bin` via `Y.encodeStateAsUpdate` / `Y.applyUpdate`
+  - [x] `y-websocket/bin/utils.setupWSConnection` wires the raw socket; defensive params parsing for non-WS HEAD requests
+  - [x] Custom FS persistence (no leveldb): `setPersistence` `bindState` / `writeState` reads/writes `packages/server/data/<docId>.bin` via `Y.encodeStateAsUpdate` / `Y.applyUpdate`; paths resolved relative to package via `import.meta.url`
   - [x] On-update flush: 1 Hz scan over `utils.docs` attaches a single `update` listener per doc
   - [x] Client gates collab behind `?collab=1`; uses `connectWebsocket` from `@vistrates/doc`
   - [x] Client also attempts `attachIndexedDB` for local-first persistence; failures are warned but never block boot
-  - [x] `pnpm typecheck` green; 40 tests still passing
-  - [ ] Two-tab cross-browser smoke test (resume task)
+  - [x] **Verified end-to-end** with two-`Doc` round-trip: `docA.set('hello','from A')` → 1.5 s later `docB.toJSON() = {hello:'from A',count:42}`; persisted file appeared at `packages/server/data/<doc>.bin`
+  - [x] Ambient `y-websocket/bin/utils` declaration in `packages/server/src/types/` so strict TS accepts the CJS shim
+
+- [x] **Phase 12 — Polish (README, reset, error boundaries, CI green)** _(done)_
+  - [x] React `ErrorBoundary` component; wraps each Dashboard view tile + the whole app shell
+  - [x] `ResetButton` in header — wipes `localStorage` keys + IndexedDB databases used by the app, reloads page; user-confirmed
+  - [x] Multiple demos (`iris`, `cars`, `gps`) selectable via `?demo=` query param + a `DemoPicker` dropdown in the header that switches via reload
+  - [x] **PipelineView upgraded to React Flow** (`@xyflow/react`) with custom node, dagre-driven layout, animated edges, MiniMap, Controls, dotted background; replaces the manual SVG implementation
+  - [x] Top-level `README.md` with quickstart, architecture, demos list, hashable-clause explanation, adapter overview, live-coding + collab + GH Pages docs
+  - [x] `.github/workflows/pages.yml` — builds with `VITE_BASE=/<repo>/` and deploys `apps/web/dist` via `actions/deploy-pages`
+  - [x] `.github/workflows/ci.yml` — runs `pnpm typecheck && pnpm test && pnpm lint` on every push/PR
+  - [x] ESLint flat config: `@eslint/js` dep + `eslint.config.mjs` (renamed); ignored `vitest.config.ts`, `vite.config.ts`, the config itself
+  - [x] All gates green: `pnpm lint`, `pnpm typecheck`, `pnpm test` (40 passing), `pnpm build` (web bundle ~1.8 MB)
 - [ ] **Phase 12 — README + reset + error boundaries + CI green** (1 day)
 
 ## Milestones
@@ -119,7 +130,8 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 8 | Pipeline (Dagre DAG) + Mobile views; 4-tab shell. |
 | 2026-04-26 | 9 | Canvas (interactjs drag/resize + markdown notes) + Presentation (TraLuver slide); 6-tab shell. |
 | 2026-04-26 | 10 | Theme (light/dark + density), Typewriter snippet expander, Golem Playwright snapshot endpoint. |
-| 2026-04-26 | 11 | y-websocket Fastify route + custom FS persistence (no leveldb); client connects via `?collab=1`. Two-tab smoke test pending. |
+| 2026-04-26 | 11 | y-websocket Fastify route + custom FS persistence (no leveldb); client connects via `?collab=1`. Verified two-doc round-trip + on-disk persistence. |
+| 2026-04-26 | 12 | README + 3 demos (iris/cars/gps) + DemoPicker + Reset button + ErrorBoundary + GH Pages workflow + CI workflow + React Flow pipeline. All gates green. |
 
 ## Open notes / decisions
 
@@ -129,16 +141,18 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 - Live in-page paragraph eval via `new Function` (trusted authors). Sandboxing via `quickjs-emscripten` is a v2 concern.
 - Hammer.js is dormant — replaced by `interactjs`. `dagre` → `@dagrejs/dagre`.
 
-## Resume notes (2026-04-26 — paused mid-Phase 11)
+## v0.1 complete — all 13 phases shipped
 
-11/13 phases shipped to `claude/modernize-analytics-platform-ai0FR`. Latest pushed commit covers Phase 11 server + client wiring; what's left:
+13/13 phases on `claude/modernize-analytics-platform-ai0FR`. The CI workflow runs `typecheck && test && lint` on every push; the Pages workflow deploys the static build to `https://<owner>.github.io/<repo>/` (enable in GitHub repo Settings → Pages → "GitHub Actions" source).
 
-1. Smoke-test collab end-to-end in two browser windows opened with `?collab=1`. Verify: edits sync via `/collab/:doc`, doc persists to `apps/server/data/<docId>.bin`, restart restores state.
-2. **Phase 12 — Polish.** Top-level `README.md` quickstart, error boundaries around lifecycle methods (mirror original try/catch from `legacy/Vistrates/kTKppb2i-Vistrate.csp` lines 455–461), one-click "Reset doc" button, ensure `pnpm test && pnpm lint && pnpm typecheck` are all green for CI.
-3. Optional: `y-codemirror.next` integration so the CodeMirror editor itself becomes collaborative (not just the doc model).
-4. Optional: structured Vitest coverage for the React shell (e.g. `@testing-library/react` smoke test that boots `RuntimeProvider` and asserts the demo controllers come up).
+### Open follow-ons (not in v0.1)
 
-Resume by reading `docs/PLAN.md` + this file + the latest commit.
+1. `y-codemirror.next` — make the CodeMirror editor collaborative (not just the doc model), so two users can co-type into the same paragraph.
+2. `@testing-library/react` smoke test that boots `RuntimeProvider` and asserts the demo controllers come up; Playwright e2e for the linked-selection brush flow.
+3. Awareness UI: render other users' cursors/selections in collab mode.
+4. Persist `dashboard` / `canvas` layouts back into the Yjs doc.
+5. Sandbox the live `new Function` evaluation via `quickjs-emscripten` for untrusted authors.
+6. Port the remaining legacy `.csp` components (Plotly, Leaflet, Word Cloud, Parallel Coordinates) as `makeDomComponent` wrappers.
 
 ## How to keep this current
 

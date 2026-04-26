@@ -4,9 +4,9 @@
  * Replace with proper types when upstream publishes them.
  */
 declare module '@uwdata/vgplot' {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  type AnyFn = (...args: any[]) => any;
-  export const plot: AnyFn;
+  type AnyFn = (...args: unknown[]) => unknown;
+  /** vg.plot returns a DOM Element (the rendered chart). */
+  export const plot: (...args: unknown[]) => Element;
   export const barY: AnyFn;
   export const barX: AnyFn;
   export const dot: AnyFn;

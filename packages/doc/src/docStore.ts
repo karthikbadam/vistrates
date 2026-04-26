@@ -242,7 +242,7 @@ function paragraphToSnapshot(p: Y.Map<JsonValue>): ParagraphSnapshot {
   const name = p.get(PARAGRAPH_FIELDS.name);
   if (typeof name === 'string') out.name = name;
   const code = p.get(PARAGRAPH_FIELDS.code);
-  if (code instanceof Y.Text) out.code = asYText(code).toString();
+  if (code instanceof Y.Text) out.code = asYText(code).toJSON();
   const data = p.get(PARAGRAPH_FIELDS.data);
   if (data instanceof Y.Map) out.data = yMapToJson(asYMap(data));
   const view = p.get(PARAGRAPH_FIELDS.view);

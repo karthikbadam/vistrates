@@ -3,7 +3,6 @@ import { createRoot, type Root } from 'react-dom/client';
 import type {
   AnyVisComponentDefinition,
   AnyVisController,
-  ComponentOutput,
   InteractionClause,
   JsonObject,
 } from '@vistrates/types';
@@ -62,7 +61,7 @@ export function makeSemioticComponent(opts: SemioticComponentSpec): AnyVisCompon
       const state = stateByController.get(this);
       if (!state) return;
 
-      const tableSrc = (this.src as Readonly<Record<string, ComponentOutput | null>>)['table'];
+      const tableSrc = (this.src)['table'];
       if (!tableSrc || tableSrc.kind !== 'table') return;
 
       const { query } = await import('@vistrates/data');

@@ -1,4 +1,4 @@
-import type { AnyVisComponentDefinition, ComponentOutput, InteractionClause } from '@vistrates/types';
+import type { AnyVisComponentDefinition, InteractionClause } from '@vistrates/types';
 import { asPredicate } from '@vistrates/types';
 import { asString, readDataObject } from '../dataAccess.js';
 
@@ -20,8 +20,8 @@ export const filterJoinComponent: AnyVisComponentDefinition = {
   props: [],
   defaultData: { mode: 'AND' },
   update(_source) {
-    const left = (this.src as Readonly<Record<string, ComponentOutput | null>>)['left'];
-    const right = (this.src as Readonly<Record<string, ComponentOutput | null>>)['right'];
+    const left = (this.src)['left'];
+    const right = (this.src)['right'];
     const data = readDataObject<FilterJoinData>(this);
     const mode = asString(data.mode) === 'OR' ? 'OR' : 'AND';
 

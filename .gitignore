@@ -8,4 +8,6 @@ dist
 coverage
 apps/server/data
 apps/server/snapshots
+packages/server/data
+packages/server/snapshots
 .turbo
