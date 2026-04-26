@@ -1,3 +1,4 @@
-// Phase 2 — Yjs-backed doc model lives here.
-// Stubbed for Phase 0 so the workspace resolves.
-export const PLACEHOLDER = 'doc-stub';
+export * from './schema.js';
+export * from './docStore.js';
+export { attachIndexedDB, type LocalPersistence } from './localPersistence.js';
+export { connectWebsocket, type CollabSession } from './collab.js';

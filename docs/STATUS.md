@@ -22,7 +22,13 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `@vistrates/runtime` clause module: `canonicalizeJson`, `canonicalizeClause`, `hashClause` (Web Crypto + Node fallback)
   - [x] Vitest: 9/9 passing (key permutation invariance, predicate sensitivity, hex format)
   - [x] `pnpm typecheck` green across all 7 packages
-- [ ] **Phase 2 — Yjs doc model** (1–2 days)
+- [x] **Phase 2 — Yjs doc model** _(done)_
+  - [x] Schema constants (`META_KEY`, `SECTIONS_KEY`, `PARAGRAPH_FIELDS`, `SCHEMA_VERSION = 1`)
+  - [x] Typed `DocStore` wrapping `Y.Doc` with `init`, `addSection`, `addParagraph`, `setParagraphCode` (Y.Text), `patchParagraph{Data,Props,View}` (Y.Map), `snapshot()` (deep JSON), `encodeUpdate` / `applyUpdate`
+  - [x] Yjs ↔ JSON bridge (`jsonToYMap`, `yMapToJson`, type narrowers `asYMap` / `asYArrayOfYMap` / `asYText`)
+  - [x] Browser-only `attachIndexedDB` (y-indexeddb) and `connectWebsocket` (y-websocket) with dynamic imports
+  - [x] Vitest: 6/6 (round-trip, paragraph patches, Y.Text replace, two-doc sync via `encodeUpdate`/`applyUpdate`, error on missing paragraph)
+  - [x] `pnpm typecheck` green
 - [ ] **Phase 3 — Runtime + paragraph executor** (2 days)
 - [ ] **Phase 4 — DuckDB-WASM + Mosaic Coordinator** (2 days)
 - [ ] **Phase 5 — Visualization adapters** (2 days)
@@ -41,6 +47,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 0 | Branch created, legacy moved, root configs in place. |
 | 2026-04-26 | 0 | All package stubs built; `pnpm install` + `pnpm typecheck` + `pnpm dev` all green. |
 | 2026-04-26 | 1 | Types package complete; clause hash + 9-test suite passing. |
+| 2026-04-26 | 2 | Yjs-backed DocStore + IndexedDB/WebSocket connectors; 6 doc tests passing (15 total). |
 
 ## Open notes / decisions
 
