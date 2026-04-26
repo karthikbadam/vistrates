@@ -65,6 +65,12 @@ export interface DemoParagraphConfig {
   readonly data: Record<string, unknown>;
   readonly src?: Readonly<Record<string, string>>;
   readonly code?: string;
+  /**
+   * Whether this paragraph renders something to the Dashboard. Default true.
+   * Source/processing paragraphs (`csv-loader`, `filter`, etc.) emit data
+   * but have no view, so we mark them `false` to keep the dashboard clean.
+   */
+  readonly visible?: boolean;
 }
 
 export interface Demo {
@@ -87,6 +93,7 @@ const irisDemo: Demo = {
       name: 'Iris CSV',
       defId: 'csv-loader',
       data: { tableName: 'iris', text: IRIS_CSV },
+      visible: false,
       code: `// Built-in csv-loader. Edit \`data\` in the inspector to point at your own CSV.\nreturn registry['csv-loader'];`,
     },
     {
@@ -95,6 +102,7 @@ const irisDemo: Demo = {
       defId: 'filter',
       data: { viewName: 'iris_filtered' },
       src: { in: 'p-csv' },
+      visible: false,
       code: `return registry['filter'];`,
     },
     {
@@ -158,6 +166,7 @@ const carsDemo: Demo = {
       name: 'mtcars CSV',
       defId: 'csv-loader',
       data: { tableName: 'cars', text: CARS_CSV },
+      visible: false,
       code: `return registry['csv-loader'];`,
     },
     {
@@ -216,6 +225,7 @@ const gpsDemo: Demo = {
       name: 'GPS Simulator',
       defId: 'gps-simulator',
       data: { tableName: 'gps_stream', intervalMs: 250, agents: 5 },
+      visible: false,
       code: `return registry['gps-simulator'];`,
     },
     {

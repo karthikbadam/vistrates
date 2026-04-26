@@ -108,41 +108,31 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
         // 1. Register built-ins.
         registerBuiltins(runtime);
 
-        // 2. Register the dynamic adapter outputs that the demo paragraphs reference.
-        //    (Live paragraph code can re-register/hot-swap these.)
-        const demoBar = makeMosaicComponent({
-          id: 'demo-mosaic-bar',
-          name: 'Bar Chart (Mosaic vgplot)',
-          version: '0.1.0',
-          spec: ({ table, selection }) =>
-            vg.plot(
-              vg.barY(vg.from(table, { filterBy: selection }), {
-                x: 'species',
-                y: vg.count(),
-                fill: 'species',
-              }),
-              vg.width(640),
-              vg.height(360),
-              vg.marginLeft(60),
-            ),
-        });
-        const demoScatter = makeVegaLiteComponent({
-          id: 'demo-vegalite-scatter',
-          name: 'Sepal length vs width',
-          version: '0.1.0',
-          spec: () => ({
-            width: 480,
-            height: 320,
-            mark: { type: 'point', filled: true, size: 80 },
-            encoding: {
-              x: { field: 'sepal_length', type: 'quantitative' },
-              y: { field: 'sepal_width', type: 'quantitative' },
-              color: { field: 'species', type: 'nominal' },
-            },
-          }),
-        });
-        if (!runtime.hasDefinition(demoBar.id)) runtime.registerDefinition(demoBar);
-        if (!runtime.hasDefinition(demoScatter.id)) runtime.registerDefinition(demoScatter);
+        // 2. Evaluate every demo paragraph that has `code`. The paragraph code
+        //    IS the def — calling makeMosaicComponent / makeVegaLiteComponent
+        //    inside the eval'd snippet returns a VisComponentDefinition we
+        //    register here so step 4 can instantiate against it. This is the
+        //    live-coding path used at runtime when the user clicks Run; we
+        //    bootstrap the demo through the same code path so what you see in
+        //    the editor exactly matches what's mounted.
+        const { evaluateParagraph } = await import('@vistrates/runtime');
+        for (const p of demoDoc) {
+          if (!p.code) continue;
+          if (runtime.hasDefinition(p.defId)) continue;
+          const result = evaluateParagraph(p.code, evalCtx);
+          if (!result.ok) {
+            console.error(`[vistrates] demo paragraph ${p.paragraphId} failed to eval:`, result.error);
+            continue;
+          }
+          if (result.definition.id !== p.defId) {
+            console.warn(
+              `[vistrates] demo paragraph ${p.paragraphId} expected defId="${p.defId}" but eval produced "${result.definition.id}"`,
+            );
+          }
+          if (!runtime.hasDefinition(result.definition.id)) {
+            runtime.registerDefinition(result.definition);
+          }
+        }
 
         // 3. Seed the doc store. If a section already exists (loaded from
         //    IndexedDB / .vistrate file), keep it and let initial paragraph

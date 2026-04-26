@@ -42,15 +42,9 @@ function Shell(): JSX.Element {
   return (
     <main className="app">
       <header className="app-header">
-        <h1>
-          Vistrates <span className="demo-title">— {activeDemo.title}</span>
-        </h1>
-        <div className="header-tools">
-          <DemoPicker />
-          <FileIO />
-          <GolemSnapshot />
-          <ResetButton />
-          <ThemeToggle />
+        <div className="brand">
+          <h1>Vistrates</h1>
+          <span className="brand-sub">{activeDemo.title}</span>
         </div>
         <nav className="tabs">
           {(['dashboard', 'notebook', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
@@ -64,6 +58,13 @@ function Shell(): JSX.Element {
             </button>
           ))}
         </nav>
+        <div className="header-tools">
+          <DemoPicker />
+          <FileIO />
+          <GolemSnapshot />
+          <ResetButton />
+          <ThemeToggle />
+        </div>
       </header>
       <BootGate>
         {tab === 'dashboard' ? (

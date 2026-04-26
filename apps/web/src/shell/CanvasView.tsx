@@ -17,16 +17,18 @@ interface CanvasObject {
 }
 
 const initialObjects: CanvasObject[] = [
-  ...demoDoc.map((p, i) => ({
-    id: `view-${p.paragraphId}`,
-    kind: 'view' as const,
-    paragraphId: p.paragraphId,
-    x: 40 + (i % 2) * 540,
-    y: 40 + Math.floor(i / 2) * 420,
-    w: 500,
-    h: 380,
-    rotation: 0,
-  })),
+  ...demoDoc
+    .filter((p) => p.visible !== false)
+    .map((p, i) => ({
+      id: `view-${p.paragraphId}`,
+      kind: 'view' as const,
+      paragraphId: p.paragraphId,
+      x: 40 + (i % 2) * 540,
+      y: 40 + Math.floor(i / 2) * 420,
+      w: 500,
+      h: 380,
+      rotation: 0,
+    })),
   {
     id: 'note-1',
     kind: 'note' as const,

@@ -8,7 +8,8 @@ export function MobileView(): JSX.Element {
   const slotRef = useRef<HTMLDivElement | null>(null);
   useTopologyTick();
 
-  const current = demoDoc[idx];
+  const visible = demoDoc.filter((p) => p.visible !== false);
+  const current = visible[idx];
 
   useEffect(() => {
     const slot = slotRef.current;
@@ -36,13 +37,13 @@ export function MobileView(): JSX.Element {
           <span className="title">
             {current.name}
             <span className="counter">
-              {idx + 1} / {demoDoc.length}
+              {idx + 1} / {visible.length}
             </span>
           </span>
           <button
             type="button"
-            disabled={idx >= demoDoc.length - 1}
-            onClick={() => setIdx((n) => Math.min(demoDoc.length - 1, n + 1))}
+            disabled={idx >= visible.length - 1}
+            onClick={() => setIdx((n) => Math.min(visible.length - 1, n + 1))}
             aria-label="next"
           >
             →

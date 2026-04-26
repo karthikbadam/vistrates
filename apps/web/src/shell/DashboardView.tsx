@@ -36,11 +36,12 @@ function ViewCard({ paragraphId, name }: ViewCardProps): React.JSX.Element {
 }
 
 export function DashboardView(): React.JSX.Element {
+  const visible = demoDoc.filter((p) => p.visible !== false);
   return (
     <>
       <DemoCards />
       <section className="dashboard">
-        {demoDoc.map((p) => (
+        {visible.map((p) => (
           <ErrorBoundary key={p.paragraphId} label={p.name}>
             <ViewCard paragraphId={p.paragraphId} name={p.name} />
           </ErrorBoundary>

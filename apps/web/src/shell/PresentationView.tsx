@@ -10,7 +10,8 @@ export function PresentationView(): JSX.Element {
 
   // The TraLuver-style slide template: a title, the active component view,
   // and a footer with slide counter. Built-in keyboard nav.
-  const current = demoDoc[slide];
+  const visible = demoDoc.filter((p) => p.visible !== false);
+  const current = visible[slide];
 
   useEffect(() => {
     const el = slotRef.current;
@@ -22,7 +23,7 @@ export function PresentationView(): JSX.Element {
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {
       if (e.key === 'ArrowRight' || e.key === ' ') {
-        setSlide((n) => Math.min(demoDoc.length - 1, n + 1));
+        setSlide((n) => Math.min(visible.length - 1, n + 1));
       } else if (e.key === 'ArrowLeft') {
         setSlide((n) => Math.max(0, n - 1));
       }
@@ -50,12 +51,12 @@ export function PresentationView(): JSX.Element {
             ←
           </button>
           <span className="slide-counter">
-            {slide + 1} / {demoDoc.length}
+            {slide + 1} / {visible.length}
           </span>
           <button
             type="button"
-            disabled={slide === demoDoc.length - 1}
-            onClick={() => setSlide((n) => Math.min(demoDoc.length - 1, n + 1))}
+            disabled={slide === visible.length - 1}
+            onClick={() => setSlide((n) => Math.min(visible.length - 1, n + 1))}
           >
             →
           </button>

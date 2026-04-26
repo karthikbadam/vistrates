@@ -29,3 +29,11 @@ jobs:
 
       - name: Lint
         run: pnpm lint
+
+      - name: Build (production bundle)
+        # Catches production-only failures (Vite tree-shaking surprises,
+        # base-path resolution, missing dynamic imports) that the dev
+        # server's looser pipeline can hide.
+        run: pnpm --filter @vistrates/web build
+        env:
+          VITE_BASE: /${{ github.event.repository.name }}/
