@@ -85,7 +85,13 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `PresentationView` — TraLuver-style 16:9 slide template with title + stage + footer; ←/→/space keyboard navigation
   - [x] 6-tab shell (Dashboard / Notebook / Pipeline / Canvas / Present / Mobile)
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [ ] **Phase 10 — Theme + Typewriter + Golem** (1 day)
+- [x] **Phase 10 — Theme + Typewriter + Golem** _(done)_
+  - [x] `ThemeToggle` — light/dark + comfy/compact density toggles backed by `localStorage` and `data-theme` / `data-density` attributes; CSS variables flip per theme
+  - [x] Typewriter — CodeMirror 6 keymap that expands snippet triggers (`vc`, `mosaic`, `vega`) when Tab is pressed at end of word; integrated into the editor
+  - [x] Golem — Fastify `POST /golem` endpoint uses Playwright (optional dep) to render a vistrate URL headlessly to PNG/PDF and save under `apps/server/snapshots/`; degrades gracefully with a 503 + remediation message if Playwright isn't installed
+  - [x] `GolemSnapshot` button in the header POSTs to the server and surfaces status inline
+  - [x] CORS enabled on the server so the Vite app can call it across ports
+  - [x] `pnpm typecheck` green; 40 tests still passing
 - [ ] **Phase 11 — y-websocket collab server + persistence** (1 day)
 - [ ] **Phase 12 — README + reset + error boundaries + CI green** (1 day)
 
@@ -104,6 +110,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 7 | React shell with Notebook (CodeMirror) + Dashboard tabs; demo doc boots end-to-end. |
 | 2026-04-26 | 8 | Pipeline (Dagre DAG) + Mobile views; 4-tab shell. |
 | 2026-04-26 | 9 | Canvas (interactjs drag/resize + markdown notes) + Presentation (TraLuver slide); 6-tab shell. |
+| 2026-04-26 | 10 | Theme (light/dark + density), Typewriter snippet expander, Golem Playwright snapshot endpoint. |
 
 ## Open notes / decisions
 

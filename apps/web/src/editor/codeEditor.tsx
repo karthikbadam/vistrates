@@ -3,6 +3,7 @@ import { EditorState } from '@codemirror/state';
 import { EditorView, lineNumbers } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
 import { oneDark } from '@codemirror/theme-one-dark';
+import { typewriterExtension } from './typewriter.js';
 
 interface CodeEditorProps {
   readonly value: string;
@@ -24,6 +25,7 @@ export function CodeEditor({ value, onChange, readOnly = false }: CodeEditorProp
           lineNumbers(),
           javascript(),
           oneDark,
+          typewriterExtension,
           EditorState.readOnly.of(readOnly),
           EditorView.updateListener.of((u) => {
             if (u.docChanged && onChange) {

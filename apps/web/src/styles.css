@@ -1,4 +1,5 @@
-:root {
+:root,
+:root[data-theme='dark'] {
   --vs-bg: #0f1115;
   --vs-fg: #e6e8ee;
   --vs-muted: #8a8f9c;
@@ -9,6 +10,28 @@
   --vs-border: #2a2f3a;
   --vs-error: #ff7a8a;
   --vs-ok: #7be0a3;
+  --vs-pad: 24px;
+  --vs-card-pad: 12px;
+  --vs-fz: 14px;
+}
+
+:root[data-theme='light'] {
+  --vs-bg: #f6f7fb;
+  --vs-fg: #1c1f25;
+  --vs-muted: #66707d;
+  --vs-accent: #4a6cff;
+  --vs-accent-2: #8b5cff;
+  --vs-card: #ffffff;
+  --vs-card-2: #f0f2f7;
+  --vs-border: #d8dde5;
+  --vs-error: #d22f48;
+  --vs-ok: #1e8a4a;
+}
+
+:root[data-density='compact'] {
+  --vs-pad: 12px;
+  --vs-card-pad: 8px;
+  --vs-fz: 13px;
 }
 
 * {
@@ -38,12 +61,69 @@ body {
 }
 
 .app-header {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 16px;
   margin-bottom: 24px;
   border-bottom: 1px solid var(--vs-border);
   padding-bottom: 12px;
+}
+
+.header-tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-self: end;
+  order: 2;
+}
+
+.theme-toggle {
+  display: flex;
+  gap: 4px;
+}
+
+.theme-toggle button {
+  width: 32px;
+  height: 32px;
+  background: var(--vs-card);
+  color: var(--vs-fg);
+  border: 1px solid var(--vs-border);
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.golem-snapshot {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+
+.golem-snapshot button {
+  background: var(--vs-card-2);
+  color: var(--vs-fg);
+  border: 1px solid var(--vs-border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.golem-snapshot button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.golem-status {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  color: var(--vs-muted);
+  max-width: 220px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .app-header h1 {

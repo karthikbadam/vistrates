@@ -6,6 +6,8 @@ import { PipelineView } from './PipelineView.js';
 import { MobileView } from './MobileView.js';
 import { CanvasView } from './CanvasView.js';
 import { PresentationView } from './PresentationView.js';
+import { ThemeToggle } from './ThemeToggle.js';
+import { GolemSnapshot } from './GolemSnapshot.js';
 
 type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'canvas' | 'present' | 'mobile';
 
@@ -36,6 +38,10 @@ function Shell(): JSX.Element {
     <main className="app">
       <header className="app-header">
         <h1>Vistrates</h1>
+        <div className="header-tools">
+          <GolemSnapshot />
+          <ThemeToggle />
+        </div>
         <nav className="tabs">
           {(['dashboard', 'notebook', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
             <button
