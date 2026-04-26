@@ -22,22 +22,28 @@ export async function loadCsvFromUrl(tableName: string, url: string): Promise<vo
 }
 
 /**
- * Load CSV from raw text. We register a virtual file via DuckDB-WASM file
- * registration. Falls back to inline VALUES for very small payloads in tests.
+ * Load CSV from raw text. We register a virtual file via DuckDB-WASM's
+ * file-registration API, then COPY into a table.
+ *
+ * IMPORTANT: the wasm connector's underlying DuckDB instance is initialized
+ * LAZILY — `connector._db` is `undefined` until the first query fires.
+ * We must call the public async `getDuckDB()` method (or `getConnection()`)
+ * to trigger initialization. Using `_db` directly is a bug — it returns
+ * undefined on first use and throws.
  */
 export async function loadCsvFromText(tableName: string, text: string): Promise<void> {
   const fileName = `_inline_${tableName}_${Date.now()}.csv`;
   const { getCoordinator } = await import('./coordinator.js');
   const coord = await getCoordinator();
-  // Reach into the wasm connector's underlying duckdb. Type is loose by design;
-  // the duckdb instance is private to the connector but exposed via `_db`.
-  const connectorRaw = coord.databaseConnector() as unknown as {
-    readonly _db?: { registerFileText: (name: string, content: string) => Promise<void> };
+  const connector = coord.databaseConnector() as unknown as {
+    getDuckDB?: () => Promise<{ registerFileText: (name: string, content: string) => Promise<void> }>;
   };
-  const db = connectorRaw._db;
-  if (!db?.registerFileText) {
-    throw new Error('loadCsvFromText: DuckDB-WASM connector not available');
+  if (typeof connector.getDuckDB !== 'function') {
+    throw new Error(
+      'loadCsvFromText: DuckDB-WASM connector lacks getDuckDB(); is the coordinator using wasmConnector?',
+    );
   }
+  const db = await connector.getDuckDB();
   await db.registerFileText(fileName, text);
   await loadCsvFromUrl(tableName, fileName);
 }

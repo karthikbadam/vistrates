@@ -84,7 +84,7 @@ export interface Demo {
 
 const irisDemo: Demo = {
   id: 'iris',
-  title: 'Iris — linked selection',
+  title: 'Iris',
   description:
     'Classic Iris dataset. Drag-brush the bar chart to filter; the scatter plot updates live via the shared selection.',
   paragraphs: [
@@ -157,7 +157,7 @@ const irisDemo: Demo = {
 
 const carsDemo: Demo = {
   id: 'cars',
-  title: 'mtcars — Vega-Lite heatmap',
+  title: 'mtcars',
   description:
     'Cars dataset binned by cylinders × origin with average MPG. Demonstrates the Vega-Lite adapter against an inline CSV.',
   paragraphs: [
@@ -216,7 +216,7 @@ const carsDemo: Demo = {
 
 const gpsDemo: Demo = {
   id: 'gps',
-  title: 'GPS stream — live data',
+  title: 'GPS stream',
   description:
     'Synthetic GPS rows stream into DuckDB on a 200 ms tick; the bar chart updates reactively as new agents arrive.',
   paragraphs: [
