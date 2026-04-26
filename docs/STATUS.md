@@ -74,7 +74,11 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] Vite dev verified — index, main, runtimeContext, NotebookView all transform; React refresh wired
   - [x] Ambient `@uwdata/vgplot` declaration so strict TS doesn't fail on the JS-only package
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [ ] **Phase 8 — Pipeline + Mobile views** (1 day)
+- [x] **Phase 8 — Pipeline + Mobile views** _(done)_
+  - [x] `PipelineView` consumes `runtime.topology()`, lays out via `@dagrejs/dagre` (LR rankdir), renders an SVG DAG with arrow markers and edge labels (the src slot name); re-renders on every topology event via `useTopologyTick`
+  - [x] `MobileView` 375×700 phone-frame mock with prev/next nav over the demo paragraphs; reuses the same vis-host divs as Dashboard so switching tabs preserves chart state
+  - [x] Tab switcher in `App.tsx` covers Dashboard / Notebook / Pipeline / Mobile
+  - [x] `pnpm typecheck` green; 40 tests still passing
 - [ ] **Phase 9 — Canvas + Presentation views** (2 days)
 - [ ] **Phase 10 — Theme + Typewriter + Golem** (1 day)
 - [ ] **Phase 11 — y-websocket collab server + persistence** (1 day)
@@ -93,6 +97,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 5 | Mosaic / Semiotic / Vega-Lite / DOM adapters; no per-chart code. |
 | 2026-04-26 | 6 | 13 built-in components (4 sources / 6 processing / 3 text), all SQL-backed. |
 | 2026-04-26 | 7 | React shell with Notebook (CodeMirror) + Dashboard tabs; demo doc boots end-to-end. |
+| 2026-04-26 | 8 | Pipeline (Dagre DAG) + Mobile views; 4-tab shell. |
 
 ## Open notes / decisions
 

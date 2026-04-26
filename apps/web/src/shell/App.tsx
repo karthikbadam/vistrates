@@ -2,8 +2,10 @@ import { useState, type JSX } from 'react';
 import { RuntimeProvider, useRuntime } from '../runtimeContext.js';
 import { NotebookView } from './NotebookView.js';
 import { DashboardView } from './DashboardView.js';
+import { PipelineView } from './PipelineView.js';
+import { MobileView } from './MobileView.js';
 
-type Tab = 'notebook' | 'dashboard';
+type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'mobile';
 
 function BootGate({ children }: { readonly children: JSX.Element }): JSX.Element {
   const { bootStatus } = useRuntime();
@@ -33,23 +35,29 @@ function Shell(): JSX.Element {
       <header className="app-header">
         <h1>Vistrates</h1>
         <nav className="tabs">
-          <button
-            type="button"
-            className={tab === 'dashboard' ? 'active' : ''}
-            onClick={() => setTab('dashboard')}
-          >
-            Dashboard
-          </button>
-          <button
-            type="button"
-            className={tab === 'notebook' ? 'active' : ''}
-            onClick={() => setTab('notebook')}
-          >
-            Notebook
-          </button>
+          {(['dashboard', 'notebook', 'pipeline', 'mobile'] as const).map((t) => (
+            <button
+              key={t}
+              type="button"
+              className={tab === t ? 'active' : ''}
+              onClick={() => setTab(t)}
+            >
+              {t.charAt(0).toUpperCase() + t.slice(1)}
+            </button>
+          ))}
         </nav>
       </header>
-      <BootGate>{tab === 'dashboard' ? <DashboardView /> : <NotebookView />}</BootGate>
+      <BootGate>
+        {tab === 'dashboard' ? (
+          <DashboardView />
+        ) : tab === 'notebook' ? (
+          <NotebookView />
+        ) : tab === 'pipeline' ? (
+          <PipelineView />
+        ) : (
+          <MobileView />
+        )}
+      </BootGate>
     </main>
   );
 }
