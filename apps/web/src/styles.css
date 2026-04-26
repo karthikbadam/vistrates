@@ -1,37 +1,49 @@
+/* Color palette matches karthikbadam.github.io — sharp blacks/whites, chakra
+   gray scale, warm-cream accent in dark mode, classic blue in light. */
 :root,
 :root[data-theme='dark'] {
-  --vs-bg: #0f1115;
-  --vs-fg: #e6e8ee;
-  --vs-muted: #8a8f9c;
-  --vs-accent: #7aa2ff;
-  --vs-accent-2: #b48cff;
-  --vs-card: #181c24;
-  --vs-card-2: #1f2430;
-  --vs-border: #2a2f3a;
-  --vs-error: #ff7a8a;
-  --vs-ok: #7be0a3;
-  --vs-pad: 24px;
-  --vs-card-pad: 12px;
-  --vs-fz: 14px;
+  --vs-bg: #171923;          /* gray.900 */
+  --vs-fg: #ffffff;          /* sharp white */
+  --vs-muted: #a0aec0;       /* gray.400 */
+  --vs-accent: #dfd0b8;      /* warm cream */
+  --vs-accent-soft: #3a332b; /* warm brown-black accent background */
+  --vs-card: #1a202c;        /* gray.800 */
+  --vs-card-2: #2d3748;      /* gray.700 */
+  --vs-border: #2d3748;      /* gray.700 */
+  --vs-border-strong: #4a5568; /* gray.600 */
+  --vs-error: #fc8181;       /* red.300 */
+  --vs-ok: #9ae6b4;          /* green.300 */
 }
 
 :root[data-theme='light'] {
-  --vs-bg: #f6f7fb;
-  --vs-fg: #1c1f25;
-  --vs-muted: #66707d;
-  --vs-accent: #4a6cff;
-  --vs-accent-2: #8b5cff;
+  --vs-bg: #ffffff;          /* sharp white */
+  --vs-fg: #171923;          /* gray.900 */
+  --vs-muted: #4a5568;       /* gray.600 */
+  --vs-accent: #2b6cb0;      /* blue.700 */
+  --vs-accent-soft: #f0f5f9; /* subtle blue-grey */
   --vs-card: #ffffff;
-  --vs-card-2: #f0f2f7;
-  --vs-border: #d8dde5;
-  --vs-error: #d22f48;
-  --vs-ok: #1e8a4a;
+  --vs-card-2: #f7fafc;      /* gray.50 */
+  --vs-border: #e2e8f0;      /* gray.200 */
+  --vs-border-strong: #cbd5e0; /* gray.300 */
+  --vs-error: #c53030;       /* red.700 */
+  --vs-ok: #2f855a;          /* green.700 */
 }
 
-:root[data-density='compact'] {
-  --vs-pad: 12px;
-  --vs-card-pad: 8px;
-  --vs-fz: 13px;
+/* Auto-pick dark mode if no explicit theme is set and the OS prefers dark. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --vs-bg: #ffffff;
+    --vs-fg: #171923;
+    --vs-muted: #4a5568;
+    --vs-accent: #2b6cb0;
+    --vs-accent-soft: #f0f5f9;
+    --vs-card: #ffffff;
+    --vs-card-2: #f7fafc;
+    --vs-border: #e2e8f0;
+    --vs-border-strong: #cbd5e0;
+    --vs-error: #c53030;
+    --vs-ok: #2f855a;
+  }
 }
 
 * {
@@ -46,15 +58,26 @@ body,
 }
 
 body {
-  font-family:
-    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans',
-    'Helvetica Neue', sans-serif;
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-weight: 400;
   background: var(--vs-bg);
   color: var(--vs-fg);
-  line-height: 1.5;
+  line-height: 1.55;
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   /* Prevent horizontal overflow when a chart's intrinsic width exceeds the
      viewport — wide charts get a per-card scroll instead of moving the page. */
   overflow-x: hidden;
+}
+
+a {
+  color: var(--vs-accent);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
 
 .app {
@@ -74,29 +97,32 @@ body {
   grid-template-columns: auto 1fr auto;
   align-items: center;
   gap: 24px;
-  margin-bottom: 20px;
+  margin-bottom: 24px;
   border-bottom: 1px solid var(--vs-border);
-  padding-bottom: 14px;
+  padding-bottom: 12px;
 }
 
 .brand {
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: 12px;
   min-width: 0;
 }
 
 .brand h1 {
   margin: 0;
-  font-size: 18px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: -0.01em;
   white-space: nowrap;
+  color: var(--vs-fg);
 }
 
 .brand-sub {
   color: var(--vs-muted);
   font-size: 13px;
+  font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -105,30 +131,27 @@ body {
 .header-tools {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 16px;
   justify-self: end;
 }
 
 .tabs {
   justify-self: center;
-  background: var(--vs-card);
-  border: 1px solid var(--vs-border);
-  border-radius: 8px;
-  padding: 3px;
   display: inline-flex;
-  gap: 0;
+  gap: 24px;
 }
 
 .tabs button {
   background: transparent;
   border: none;
   color: var(--vs-muted);
-  padding: 6px 12px;
-  border-radius: 5px;
+  padding: 4px 0;
   cursor: pointer;
-  font-size: 12px;
-  font-weight: 500;
-  transition: background 0.15s, color 0.15s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .tabs button:hover {
@@ -136,8 +159,9 @@ body {
 }
 
 .tabs button.active {
-  background: var(--vs-accent);
-  color: var(--vs-bg);
+  color: var(--vs-accent);
+  font-weight: 600;
+  border-bottom-color: var(--vs-accent);
 }
 
 @media (max-width: 1100px) {
@@ -186,14 +210,20 @@ body {
 }
 
 .theme-toggle button {
-  width: 32px;
-  height: 32px;
-  background: var(--vs-card);
-  color: var(--vs-fg);
+  width: 30px;
+  height: 30px;
+  background: transparent;
+  color: var(--vs-muted);
   border: 1px solid var(--vs-border);
-  border-radius: 6px;
+  border-radius: 3px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.theme-toggle button:hover {
+  color: var(--vs-fg);
+  border-color: var(--vs-border-strong);
 }
 
 .golem-snapshot {
@@ -204,13 +234,16 @@ body {
 }
 
 .golem-snapshot button {
-  background: var(--vs-card-2);
-  color: var(--vs-fg);
+  background: transparent;
+  color: var(--vs-muted);
   border: 1px solid var(--vs-border);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  font-weight: 400;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .golem-snapshot button:disabled {
@@ -229,13 +262,16 @@ body {
 }
 
 .reset-btn {
-  background: var(--vs-card-2);
-  color: var(--vs-fg);
+  background: transparent;
+  color: var(--vs-muted);
   border: 1px solid var(--vs-border);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  font-weight: 400;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .file-io {
@@ -246,13 +282,16 @@ body {
 }
 
 .file-io button {
-  background: var(--vs-card-2);
-  color: var(--vs-fg);
+  background: transparent;
+  color: var(--vs-muted);
   border: 1px solid var(--vs-border);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 5px 10px;
+  border-radius: 3px;
   cursor: pointer;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  font-weight: 400;
+  transition: color 0.15s, border-color 0.15s;
 }
 
 .file-io button:hover {
@@ -280,10 +319,16 @@ body {
   color: var(--vs-error);
 }
 
+.golem-snapshot button:hover,
+.file-io button:hover {
+  color: var(--vs-fg);
+  border-color: var(--vs-border-strong);
+}
+
 .error-boundary {
   background: var(--vs-card);
   border: 1px solid var(--vs-error);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 16px;
   display: flex;
   flex-direction: column;
@@ -336,9 +381,18 @@ body {
   background: var(--vs-card);
   color: var(--vs-fg);
   border: 1px solid var(--vs-border);
-  border-radius: 6px;
-  padding: 6px 8px;
+  border-radius: 3px;
+  padding: 5px 8px;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
+  cursor: pointer;
+}
+
+.demo-picker label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
 }
 
 .app-header h1 {
@@ -379,7 +433,7 @@ body {
 .paragraph {
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
 }
 
@@ -387,45 +441,51 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
-  background: var(--vs-card-2);
+  padding: 10px 16px;
+  background: var(--vs-card);
   border-bottom: 1px solid var(--vs-border);
 }
 
 .paragraph header h3 {
   margin: 0;
+  font-family: 'Poppins', sans-serif;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   flex: 1;
+  color: var(--vs-fg);
 }
 
 .pill {
   display: inline-block;
   padding: 2px 8px;
-  background: rgba(122, 162, 255, 0.15);
+  background: var(--vs-accent-soft);
   color: var(--vs-accent);
   border-radius: 3px;
-  font-size: 11px;
+  font-size: 10px;
+  font-weight: 500;
   font-family: ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.02em;
 }
 
 .run-btn {
-  background: var(--vs-accent);
+  background: var(--vs-fg);
   color: var(--vs-bg);
   border: none;
-  padding: 6px 14px;
-  border-radius: 4px;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-family: 'Poppins', sans-serif;
   font-size: 12px;
   font-weight: 500;
   cursor: pointer;
+  transition: opacity 0.15s;
 }
 
 .run-btn:hover {
-  background: var(--vs-accent-2);
+  opacity: 0.85;
 }
 
 .cm-host {
-  background: #1a1d24;
+  background: var(--vs-card-2);
 }
 
 .cm-host .cm-editor {
@@ -440,12 +500,14 @@ body {
 }
 
 .paragraph-output-label {
-  padding: 6px 14px;
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.06em;
+  padding: 8px 16px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--vs-muted);
+  border-bottom: 1px solid var(--vs-border);
 }
 
 .paragraph-output-slot {
@@ -599,21 +661,22 @@ body {
 .view-card {
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
 }
 
 .view-card header {
-  padding: 8px 12px;
-  background: var(--vs-card-2);
+  padding: 10px 16px;
+  background: var(--vs-card);
   border-bottom: 1px solid var(--vs-border);
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--vs-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vs-fg);
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 .view-slot {
@@ -673,7 +736,7 @@ body {
 .pipeline-canvas {
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   padding: 0;
   overflow: hidden;
   height: 600px;
@@ -686,12 +749,13 @@ body {
 
 .rf-node {
   background: var(--vs-card);
-  border: 1px solid var(--vs-accent);
-  border-radius: 8px;
+  border: 1px solid var(--vs-border-strong);
+  border-radius: 4px;
   padding: 10px 14px;
   min-width: 180px;
   text-align: center;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'Poppins', sans-serif;
+  color: var(--vs-fg);
 }
 
 .rf-node-label {
@@ -738,11 +802,10 @@ body {
   height: 700px;
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 24px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
 }
 
 .mobile-header {
@@ -828,7 +891,7 @@ body {
   width: 100%;
   height: min(800px, calc(100vh - 220px));
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: auto;
   background: var(--vs-bg);
 }
@@ -848,7 +911,7 @@ body {
   width: 100%;
   height: min(800px, calc(100vh - 220px));
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   overflow: auto;
   background: var(--vs-bg);
 }
@@ -857,12 +920,11 @@ body {
   position: absolute;
   background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 8px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   user-select: none;
   touch-action: none;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3);
 }
 
 .canvas-handle {
@@ -921,12 +983,10 @@ body {
 .slide.tra-luver {
   width: 100%;
   max-width: 960px;
-  /* Min aspect ratio of 16/9 but free to grow taller if a chart needs it,
-     so chart contents never get clipped. */
   min-height: min(540px, 56vw);
-  background: linear-gradient(135deg, var(--vs-card) 0%, var(--vs-card-2) 100%);
+  background: var(--vs-card);
   border: 1px solid var(--vs-border);
-  border-radius: 12px;
+  border-radius: 4px;
   display: flex;
   flex-direction: column;
   overflow: hidden;
