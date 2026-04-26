@@ -38,7 +38,7 @@ function BootGate({ children }: { readonly children: JSX.Element }): JSX.Element
 }
 
 function Shell(): JSX.Element {
-  const [tab, setTab] = useState<Tab>('dashboard');
+  const [tab, setTab] = useState<Tab>('notebook');
   return (
     <main className="app">
       <header className="app-header">

@@ -2,7 +2,6 @@ import { useEffect, useRef } from 'react';
 import { demoDoc } from '../defaultDoc.js';
 import { useRuntime, useTopologyTick } from '../runtimeContext.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
-import { DemoCards } from './DemoCards.js';
 
 interface ViewCardProps {
   readonly paragraphId: string;
@@ -38,15 +37,12 @@ function ViewCard({ paragraphId, name }: ViewCardProps): React.JSX.Element {
 export function DashboardView(): React.JSX.Element {
   const visible = demoDoc.filter((p) => p.visible !== false);
   return (
-    <>
-      <DemoCards />
-      <section className="dashboard">
-        {visible.map((p) => (
-          <ErrorBoundary key={p.paragraphId} label={p.name}>
-            <ViewCard paragraphId={p.paragraphId} name={p.name} />
-          </ErrorBoundary>
-        ))}
-      </section>
-    </>
+    <section className="dashboard">
+      {visible.map((p) => (
+        <ErrorBoundary key={p.paragraphId} label={p.name}>
+          <ViewCard paragraphId={p.paragraphId} name={p.name} />
+        </ErrorBoundary>
+      ))}
+    </section>
   );
 }

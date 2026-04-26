@@ -54,14 +54,21 @@ export function makeVegaLiteComponent(opts: VegaLiteComponentSpec): AnyVisCompon
       const rows = await query(`SELECT * FROM "${tableName.replace(/"/g, '""')}"`);
       const inlineRows = toJsonRows(rows);
 
+      // Default to container-driven width so the chart fits whatever slot
+      // it's mounted in. Caller can override by setting an explicit width
+      // in the spec.
       const fullSpec: JsonObject = {
+        width: 'container',
         ...baseSpec,
         data: { values: inlineRows },
       };
 
       const embed = (await import('vega-embed')).default;
       state.view?.finalize();
-      const result = await embed(this.view.element, fullSpec, { actions: false });
+      const result = await embed(this.view.element, fullSpec, {
+        actions: false,
+        renderer: 'svg',
+      });
       state.view = result.view;
     },
     destroy() {

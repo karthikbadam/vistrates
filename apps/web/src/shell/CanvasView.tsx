@@ -150,8 +150,10 @@ export function CanvasView(): JSX.Element {
         >
           + Add note
         </button>
+        <span className="canvas-hint muted">Scroll to pan · drag handles to move · drag corner to resize</span>
       </div>
-      <div className="canvas-surface">
+      <div className="canvas-viewport">
+        <div className="canvas-world">
         {objects.map((obj) => (
           <div
             key={obj.id}
@@ -171,6 +173,7 @@ export function CanvasView(): JSX.Element {
             )}
           </div>
         ))}
+        </div>
       </div>
     </section>
   );

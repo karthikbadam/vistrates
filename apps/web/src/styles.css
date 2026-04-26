@@ -434,6 +434,30 @@ body {
   font-size: 13px;
 }
 
+.paragraph-output {
+  border-top: 1px solid var(--vs-border);
+  background: var(--vs-bg);
+}
+
+.paragraph-output-label {
+  padding: 6px 14px;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vs-muted);
+}
+
+.paragraph-output-slot {
+  padding: 12px;
+  min-height: 240px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
 .paragraph footer {
   display: flex;
   justify-content: space-between;
@@ -611,7 +635,29 @@ body {
   justify-content: center;
 }
 
-.vis-host > svg {
+/* Make every chart shape (svg, vega-embed wrappers, vgplot figures, plain
+   divs) fluid — fill the host width but never overflow it. */
+.vis-host svg,
+.vis-host figure,
+.vis-host > div,
+.vis-host > .marks {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.vis-host figure {
+  margin: 0;
+}
+
+.vis-host .vega-embed,
+.vis-host .vega-embed.has-actions {
+  width: 100%;
+  display: block;
+}
+
+.vis-host .vega-embed canvas,
+.vis-host .vega-embed svg {
   max-width: 100%;
   height: auto;
 }
@@ -755,7 +801,14 @@ body {
 
 .canvas-toolbar {
   display: flex;
-  gap: 8px;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.canvas-hint {
+  font-size: 11px;
+  font-family: ui-monospace, SFMono-Regular, monospace;
 }
 
 .canvas-toolbar button {
@@ -768,16 +821,36 @@ body {
   cursor: pointer;
 }
 
-.canvas-surface {
+/* Viewport: clipped, scrollable. The dotted-grid background scrolls with
+   the world so the user gets natural visual pan feedback. */
+.canvas-viewport {
   position: relative;
   width: 100%;
-  height: 800px;
+  height: min(800px, calc(100vh - 220px));
+  border: 1px solid var(--vs-border);
+  border-radius: 8px;
+  overflow: auto;
+  background: var(--vs-bg);
+}
+
+.canvas-world {
+  position: relative;
+  width: 3200px;
+  height: 2400px;
   background: linear-gradient(var(--vs-card) 1px, transparent 1px) 0 0 / 24px 24px,
     linear-gradient(90deg, var(--vs-card) 1px, transparent 1px) 0 0 / 24px 24px,
     var(--vs-bg);
+}
+
+/* Legacy alias for any styles still referencing canvas-surface. */
+.canvas-surface {
+  position: relative;
+  width: 100%;
+  height: min(800px, calc(100vh - 220px));
   border: 1px solid var(--vs-border);
   border-radius: 8px;
-  overflow: hidden;
+  overflow: auto;
+  background: var(--vs-bg);
 }
 
 .canvas-object {
@@ -848,7 +921,9 @@ body {
 .slide.tra-luver {
   width: 100%;
   max-width: 960px;
-  aspect-ratio: 16 / 9;
+  /* Min aspect ratio of 16/9 but free to grow taller if a chart needs it,
+     so chart contents never get clipped. */
+  min-height: min(540px, 56vw);
   background: linear-gradient(135deg, var(--vs-card) 0%, var(--vs-card-2) 100%);
   border: 1px solid var(--vs-border);
   border-radius: 12px;
@@ -880,7 +955,13 @@ body {
   align-items: center;
   justify-content: center;
   padding: 16px;
-  overflow: hidden;
+  overflow: auto;
+  min-height: 0;
+}
+
+.slide-stage > .vis-host {
+  width: 100%;
+  max-width: 100%;
 }
 
 .slide-footer {

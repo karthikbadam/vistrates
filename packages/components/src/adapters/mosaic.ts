@@ -6,9 +6,21 @@ import type {
 import { asPredicate } from '@vistrates/types';
 import { Selection } from '@uwdata/mosaic-core';
 
-/** A Mosaic vgplot spec can be anything that returns a DOM node. */
+/**
+ * A Mosaic vgplot spec can be anything that returns a DOM node. The
+ * spec function receives the bound table name, per-instance Selection,
+ * the DOM host, and the host's measured width/height — use these to
+ * size the chart (e.g. `vg.width(width)`, `vg.height(height)`) so it
+ * fits its container.
+ */
 export type VgplotSpecBuilder = (
-  ctx: { readonly table: string; readonly selection: Selection; readonly host: HTMLElement },
+  ctx: {
+    readonly table: string;
+    readonly selection: Selection;
+    readonly host: HTMLElement;
+    readonly width: number;
+    readonly height: number;
+  },
 ) => Element | HTMLElement | Promise<Element | HTMLElement>;
 
 export interface MosaicComponentSpec {
@@ -25,6 +37,12 @@ interface MosaicState {
   selection: Selection;
   unsubscribe?: () => void;
   rendered?: Element;
+  resizeObserver?: ResizeObserver;
+  /** Last rendered width — re-render only when it changes by more than 4px. */
+  lastWidth?: number;
+  /** Render closure the ResizeObserver fires; assigned by `update` so we
+   *  always have the latest table/selection bound. */
+  rerender?: () => void;
 }
 
 /**
@@ -68,6 +86,20 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
       };
       sel.addEventListener('value', onChange);
       state.unsubscribe = () => sel.removeEventListener('value', onChange);
+
+      // Re-render on host resize so charts fluidly fit their container.
+      // ResizeObserver fires once on attach with the initial size, and again
+      // on any layout change (tab switch, viewport resize, panel drag).
+      if (typeof ResizeObserver !== 'undefined') {
+        state.resizeObserver = new ResizeObserver((entries) => {
+          const entry = entries[0];
+          if (!entry) return;
+          const w = entry.contentRect.width;
+          if (state.lastWidth !== undefined && Math.abs(w - state.lastWidth) < 4) return;
+          state.rerender?.();
+        });
+        state.resizeObserver.observe(this.view.element);
+      }
     },
     async update(_source) {
       if (!this.view) return;
@@ -77,20 +109,36 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
       const tableSrc = (this.src)['table'];
       if (!tableSrc || tableSrc.kind !== 'table') return;
 
-      // Re-render the plot.
-      state.rendered?.remove();
-      const built = await opts.spec({
-        table: tableSrc.tableName,
-        selection: state.selection,
-        host: this.view.element,
-      });
-      this.view.element.replaceChildren(built);
-      state.rendered = built;
+      const view = this.view;
+      const tableName = tableSrc.tableName;
+      const sel = state.selection;
+
+      const render = async (): Promise<void> => {
+        const rect = view.element.getBoundingClientRect();
+        const width = Math.max(280, Math.floor(rect.width || 600));
+        const height = Math.max(220, Math.floor(rect.height || Math.round(width * 0.55)));
+        state.rendered?.remove();
+        const built = await opts.spec({
+          table: tableName,
+          selection: sel,
+          host: view.element,
+          width,
+          height,
+        });
+        view.element.replaceChildren(built);
+        state.rendered = built;
+        state.lastWidth = width;
+      };
+      state.rerender = () => {
+        void render();
+      };
+      await render();
     },
     destroy() {
       const state = stateByController.get(this);
       if (!state) return;
       state.unsubscribe?.();
+      state.resizeObserver?.disconnect();
       state.rendered?.remove();
       stateByController.delete(this);
     },

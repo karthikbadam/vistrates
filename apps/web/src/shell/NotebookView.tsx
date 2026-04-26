@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { evaluateParagraph } from '@vistrates/runtime';
 import { asComponentId } from '@vistrates/types';
 import { CodeEditor } from '../editor/codeEditor.js';
@@ -10,15 +10,31 @@ interface ParagraphCardProps {
 }
 
 function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
-  const { runtime, evalCtx } = useRuntime();
+  const { runtime, evalCtx, hostFor } = useRuntime();
   const [code, setCode] = useState(config.code ?? '');
   const [status, setStatus] = useState<{ kind: 'idle' | 'ok' | 'error'; message?: string }>({
     kind: 'idle',
   });
+  const slotRef = useRef<HTMLDivElement | null>(null);
 
   useTopologyTick();
   const controller = runtime.getController(asComponentId(config.paragraphId));
   const output = controller?.output;
+
+  // Adopt the runtime-owned vis-host into this card's slot for visible
+  // (visualization) paragraphs. The host is a singleton owned by the
+  // runtime — switching tabs simply moves the same DOM node, so charts
+  // keep their state.
+  const hasView = config.visible !== false;
+  useEffect(() => {
+    if (!hasView) return;
+    const slot = slotRef.current;
+    if (!slot) return;
+    const host = hostFor(config.paragraphId);
+    if (host.parentElement !== slot) {
+      slot.replaceChildren(host);
+    }
+  }, [hasView, hostFor, config.paragraphId]);
 
   const onRun = async (): Promise<void> => {
     const result = evaluateParagraph(code, evalCtx);
@@ -27,7 +43,6 @@ function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
       return;
     }
     try {
-      // Register the new def if needed; then hot-swap.
       if (!runtime.hasDefinition(result.definition.id)) {
         runtime.registerDefinition(result.definition);
       }
@@ -55,14 +70,20 @@ function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
         </button>
       </header>
       <CodeEditor value={code} onChange={setCode} />
+      {hasView && (
+        <div className="paragraph-output">
+          <div className="paragraph-output-label">Output</div>
+          <div className="paragraph-output-slot" ref={slotRef} />
+        </div>
+      )}
       <footer>
         <span className={`status status-${status.kind}`}>
           {status.kind === 'idle' ? '—' : status.message}
         </span>
         <span className="output-summary">
           {output
-            ? `output: ${output.kind}${output.kind === 'table' ? ` "${output.tableName}"` : ''}`
-            : 'no output yet'}
+            ? `${output.kind}${output.kind === 'table' ? ` "${output.tableName}"` : ''}`
+            : 'no output'}
         </span>
       </footer>
     </article>

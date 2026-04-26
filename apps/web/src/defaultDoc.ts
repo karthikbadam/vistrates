@@ -115,16 +115,16 @@ const irisDemo: Demo = {
   id: 'demo-mosaic-bar',
   name: 'Bar Chart (Mosaic vgplot)',
   version: '0.1.0',
-  spec: ({ table, selection }) =>
+  spec: ({ table, selection, width, height }) =>
     vg.plot(
       vg.barY(vg.from(table, { filterBy: selection }), {
         x: 'species',
         y: vg.count(),
         fill: 'species',
       }),
-      vg.width(640),
-      vg.height(360),
-      vg.marginLeft(60),
+      vg.width(width),
+      vg.height(Math.min(height, 360)),
+      vg.marginLeft(48),
     ),
 });`,
     },
@@ -139,8 +139,7 @@ const irisDemo: Demo = {
   name: 'Sepal length vs width',
   version: '0.1.0',
   spec: () => ({
-    width: 480,
-    height: 320,
+    height: 280,
     mark: { type: 'point', filled: true, size: 80 },
     encoding: {
       x: { field: 'sepal_length', type: 'quantitative' },
@@ -179,11 +178,11 @@ const carsDemo: Demo = {
   id: 'demo-cars-bar',
   name: 'Avg MPG by origin',
   version: '0.1.0',
-  spec: ({ table }) =>
+  spec: ({ table, width, height }) =>
     vg.plot(
       vg.barY(vg.from(table), { x: 'origin', y: vg.avg('mpg'), fill: 'origin' }),
-      vg.width(560),
-      vg.height(320),
+      vg.width(width),
+      vg.height(Math.min(height, 320)),
     ),
 });`,
     },
@@ -198,8 +197,7 @@ const carsDemo: Demo = {
   name: 'Heatmap',
   version: '0.1.0',
   spec: () => ({
-    width: 480,
-    height: 280,
+    height: 240,
     mark: 'rect',
     encoding: {
       x: { field: 'cyl', type: 'ordinal' },
@@ -238,11 +236,11 @@ const gpsDemo: Demo = {
   id: 'demo-gps-counts',
   name: 'Pings per agent',
   version: '0.1.0',
-  spec: ({ table }) =>
+  spec: ({ table, width, height }) =>
     vg.plot(
       vg.barY(vg.from(table), { x: 'id', y: vg.count(), fill: 'id' }),
-      vg.width(560),
-      vg.height(280),
+      vg.width(width),
+      vg.height(Math.min(height, 280)),
     ),
 });`,
     },
@@ -257,8 +255,7 @@ const gpsDemo: Demo = {
   name: 'GPS track',
   version: '0.1.0',
   spec: () => ({
-    width: 480,
-    height: 320,
+    height: 280,
     mark: { type: 'point', filled: true, size: 30 },
     encoding: {
       x: { field: 'lon', type: 'quantitative', scale: { zero: false } },
