@@ -144,29 +144,46 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
         if (!runtime.hasDefinition(demoBar.id)) runtime.registerDefinition(demoBar);
         if (!runtime.hasDefinition(demoScatter.id)) runtime.registerDefinition(demoScatter);
 
-        // 3. Seed the doc store.
+        // 3. Seed the doc store. If a section already exists (loaded from
+        //    IndexedDB / .vistrate file), keep it and let initial paragraph
+        //    data come from the persisted snapshot.
         doc.init({ id: DEFAULT_DOC_ID, title: DEFAULT_DOC_TITLE });
-        doc.addSection({
-          id: 'sec-main',
-          name: 'Pipeline',
-          paragraphs: demoDoc.map((p) => ({
-            id: p.paragraphId,
-            kind: 'code' as const,
-            name: p.name,
-            ...(p.code !== undefined ? { code: p.code } : {}),
-            data: p.data as Record<string, never>,
-          })),
-        });
+        const existing = doc.snapshot();
+        const persistedById = new Map<string, { data?: Record<string, unknown>; code?: string }>();
+        for (const sec of existing.sections) {
+          for (const p of sec.paragraphs) {
+            const entry: { data?: Record<string, unknown>; code?: string } = {};
+            if (p.data !== undefined) entry.data = p.data;
+            if (p.code !== undefined) entry.code = p.code;
+            persistedById.set(p.id, entry);
+          }
+        }
+        const hasMainSection = existing.sections.some((s) => s.id === 'sec-main');
+        if (!hasMainSection) {
+          doc.addSection({
+            id: 'sec-main',
+            name: 'Pipeline',
+            paragraphs: demoDoc.map((p) => ({
+              id: p.paragraphId,
+              kind: 'code' as const,
+              name: p.name,
+              ...(p.code !== undefined ? { code: p.code } : {}),
+              data: p.data as Record<string, never>,
+            })),
+          });
+        }
 
-        // 4. Instantiate controllers in pipeline order.
+        // 4. Instantiate controllers in pipeline order, preferring persisted data.
         const { VisViewImpl } = await import('@vistrates/runtime');
         for (const p of demoDoc) {
+          const persisted = persistedById.get(p.paragraphId);
+          const initialData = (persisted?.data ?? p.data) as never;
           const view = new VisViewImpl({ mode: 'dom', host: hostFor(p.paragraphId) });
           await runtime.instantiate({
             id: p.paragraphId,
             defId: p.defId,
             friendlyName: p.name,
-            initialData: p.data as never,
+            initialData,
             view,
           });
         }

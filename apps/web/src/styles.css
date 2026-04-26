@@ -136,6 +136,43 @@ body {
   font-size: 12px;
 }
 
+.file-io {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+}
+
+.file-io button {
+  background: var(--vs-card-2);
+  color: var(--vs-fg);
+  border: 1px solid var(--vs-border);
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.file-io button:hover {
+  border-color: var(--vs-accent);
+  color: var(--vs-accent);
+}
+
+.file-io button:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.file-io-status {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  color: var(--vs-muted);
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .reset-btn:hover {
   border-color: var(--vs-error);
   color: var(--vs-error);

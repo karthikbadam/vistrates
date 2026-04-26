@@ -66,6 +66,12 @@ All adapters use a `WeakMap<AnyVisController, State>` so factory-returned defini
 
 Each notebook paragraph is a CodeMirror 6 editor (one-dark + JS lang + Typewriter snippet expander). The Run button calls `evaluateParagraph(code, ctx)` against a curated context (`vg`, `makeMosaicComponent`, `makeVegaLiteComponent`, `registry`) and hot-swaps the resulting `VisComponentDefinition` into the live controller — `destroy → swap → init → update(undefined)`. Type `vc⇥`, `mosaic⇥`, or `vega⇥` to expand a skeleton.
 
+## Save / load `.vistrate` files
+
+The header has Save and Load buttons. **Save** downloads the live `Y.Doc` as a `<demo>-<timestamp>.vistrate` binary (the same `Y.encodeStateAsUpdate` format the y-websocket server persists). **Load** picks a `.vistrate` file, merges it into the current doc via `Y.applyUpdate`, and reloads the page so the runtime re-instantiates against the restored state. Round-trips cleanly with collab — the file format is identical on both sides.
+
+`RuntimeProvider` is idempotent on `addSection` and reads paragraph `data` / `code` from the doc snapshot when present, so loaded files restore your edits without resetting the demo wiring.
+
 ## Real-time collaboration
 
 Open the same URL with `?collab=1` in two browser windows: doc state syncs through the Fastify y-websocket route (`/collab/:doc`) and persists to disk under `packages/server/data/<docId>.bin`. Both browsers see each other's edits within ~100 ms.

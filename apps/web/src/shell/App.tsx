@@ -11,6 +11,7 @@ import { GolemSnapshot } from './GolemSnapshot.js';
 import { ResetButton } from './ResetButton.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { DemoPicker } from './DemoPicker.js';
+import { FileIO } from './FileIO.js';
 import { activeDemo } from '../defaultDoc.js';
 
 type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'canvas' | 'present' | 'mobile';
@@ -46,6 +47,7 @@ function Shell(): JSX.Element {
         </h1>
         <div className="header-tools">
           <DemoPicker />
+          <FileIO />
           <GolemSnapshot />
           <ResetButton />
           <ThemeToggle />

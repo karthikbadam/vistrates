@@ -145,6 +145,12 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 
 13/13 phases on `claude/modernize-analytics-platform-ai0FR`. The CI workflow runs `typecheck && test && lint` on every push; the Pages workflow deploys the static build to `https://<owner>.github.io/<repo>/` (enable in GitHub repo Settings → Pages → "GitHub Actions" source).
 
+## Post-v0.1 polish
+
+| Date (UTC) | Change |
+| --- | --- |
+| 2026-04-26 | `FileIO` Save/Load buttons in the header — download the live `Y.Doc` as a `<demo>-<stamp>.vistrate` binary; re-upload merges it back in and reloads. `RuntimeProvider` made idempotent on `addSection`, and now reads paragraph `data` / `code` from the doc snapshot when present so loaded files restore your edits. All gates remain green (lint, typecheck, 40 tests). |
+
 ### Open follow-ons (not in v0.1)
 
 1. `y-codemirror.next` — make the CodeMirror editor collaborative (not just the doc model), so two users can co-type into the same paragraph.
