@@ -33,8 +33,8 @@ function makeFakeConnector(): unknown {
 
 let fakeConnector = makeFakeConnector();
 
-vi.mock('@uwdata/mosaic-core', () => ({
-  Coordinator: class {
+vi.mock('@uwdata/mosaic-core', () => {
+  class FakeCoordinator {
     databaseConnector(): unknown {
       return fakeConnector;
     }
@@ -46,9 +46,14 @@ vi.mock('@uwdata/mosaic-core', () => ({
     query(): Promise<unknown> {
       return Promise.resolve({ toArray: () => [] });
     }
-  },
-  wasmConnector: vi.fn(() => fakeConnector),
-}));
+  }
+  return {
+    Coordinator: FakeCoordinator,
+    wasmConnector: vi.fn(() => fakeConnector),
+    // No-op the global registration; csv.test only cares about the data layer.
+    coordinator: vi.fn((c?: unknown) => c ?? new FakeCoordinator()),
+  };
+});
 
 import { loadCsvFromText, _resetCoordinatorForTesting } from '../src/index.js';
 

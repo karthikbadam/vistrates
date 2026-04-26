@@ -1,11 +1,15 @@
-import { Coordinator, wasmConnector } from '@uwdata/mosaic-core';
+import { Coordinator, coordinator, wasmConnector } from '@uwdata/mosaic-core';
 
 /**
  * Lazy singleton Mosaic Coordinator backed by DuckDB-WASM.
  *
- * On first call, instantiates a `Coordinator` and attaches a `wasmConnector`
- * (which spins up DuckDB-WASM internally). Subsequent calls return the same
- * instance so all components in the page share one DB.
+ * On first call, instantiates a `Coordinator`, attaches a `wasmConnector`
+ * (which spins up DuckDB-WASM internally), AND registers it as Mosaic's
+ * global default via `coordinator(c)`. The latter is critical — vgplot
+ * components call the global `coordinator()` (no args) to find their
+ * coordinator. If we don't register, vgplot uses a fresh empty Coordinator
+ * with no DB connector, and every chart ends up blank because its query
+ * resolves to nothing. (This was the empty-Mosaic-bar bug on Pages.)
  */
 let coord: Coordinator | undefined;
 let initPromise: Promise<Coordinator> | undefined;
@@ -22,6 +26,8 @@ export async function getCoordinator(opts: CoordinatorOptions = {}): Promise<Coo
     const c = new Coordinator();
     const connector = wasmConnector(opts.log === true ? { log: true } : {});
     c.databaseConnector(connector);
+    // Register as Mosaic's global default so vgplot picks it up.
+    coordinator(c);
     coord = c;
     return c;
   });

@@ -52,12 +52,21 @@ body {
   background: var(--vs-bg);
   color: var(--vs-fg);
   line-height: 1.5;
+  /* Prevent horizontal overflow when a chart's intrinsic width exceeds the
+     viewport — wide charts get a per-card scroll instead of moving the page. */
+  overflow-x: hidden;
 }
 
 .app {
   max-width: 1200px;
   margin: 0 auto;
   padding: 24px 24px 80px;
+}
+
+@media (max-width: 720px) {
+  .app {
+    padding: 16px 12px 60px;
+  }
 }
 
 .app-header {
@@ -139,6 +148,35 @@ body {
   .tabs,
   .header-tools {
     justify-self: start;
+  }
+  .header-tools {
+    flex-wrap: wrap;
+  }
+}
+
+@media (max-width: 720px) {
+  .brand h1 {
+    font-size: 16px;
+  }
+  .brand-sub {
+    font-size: 12px;
+  }
+  .tabs button {
+    padding: 5px 9px;
+    font-size: 11px;
+  }
+  .header-tools {
+    gap: 4px;
+  }
+  .header-tools button,
+  .header-tools .reset-btn,
+  .file-io button {
+    padding: 5px 8px;
+    font-size: 11px;
+  }
+  .golem-status,
+  .file-io-status {
+    display: none;
   }
 }
 
@@ -446,6 +484,19 @@ body {
   text-align: right;
 }
 
+@media (max-width: 720px) {
+  .demo-cards header p {
+    display: none;
+  }
+  .demo-cards-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+  .demo-card {
+    padding: 10px 12px;
+  }
+}
+
 .demo-cards-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -510,8 +561,15 @@ body {
 
 .dashboard {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(380px, 100%), 1fr));
   gap: 14px;
+}
+
+@media (max-width: 720px) {
+  .dashboard {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
 }
 
 .view-card {
@@ -540,6 +598,10 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Wide charts (e.g. vgplot with width 640) get a per-card horizontal
+     scroll on narrow viewports instead of overflowing the page. */
+  overflow-x: auto;
+  overflow-y: hidden;
 }
 
 .vis-host {
