@@ -1,9 +1,13 @@
+# Prerequisite — enable Pages once on the repo:
+#   Settings → Pages → Build and deployment → Source = "GitHub Actions"
+# Without this, the `deploy` job fails with a 404 even though `build` succeeds.
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches:
       - main
+      - master
       - claude/modernize-analytics-platform-ai0FR
   workflow_dispatch:
 
