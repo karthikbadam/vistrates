@@ -47,7 +47,14 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] Identifier and string-literal escaping (`ident`, `strLit`)
   - [x] Vitest: 12 sql-template tests (40 total). DuckDB integration is exercised live in Phase 5+.
   - [x] `pnpm typecheck` green
-- [ ] **Phase 5 — Visualization adapters** (2 days)
+- [x] **Phase 5 — Visualization adapters** _(done)_
+  - [x] Added `@uwdata/vgplot` v0.16, `vega` 5, `vega-lite` 5, `vega-embed` 6, `semiotic` 3.4 (React 19 compatible)
+  - [x] `makeMosaicComponent` — wraps a vgplot spec; subscribes to a per-instance `Selection`; mirrors Mosaic clauses out as Vistrates `InteractionClause`s with merged predicate
+  - [x] `makeVegaLiteComponent` — pulls rows from DuckDB, inlines into spec, renders via `vega-embed`, finalizes view on destroy
+  - [x] `makeSemioticComponent` — React island via `createRoot`, frame-agnostic (XYFrame / OrdinalFrame / NetworkFrame / etc.), `propsBuilder` receives rows + `emitClause` callback
+  - [x] `makeDomComponent` — escape hatch for any DOM library (Leaflet, Plotly, custom D3) with mount/update/unmount lifecycle
+  - [x] All adapters use `WeakMap<AnyVisController, State>` so factories are reusable across instances; per-controller state never leaks
+  - [x] `pnpm typecheck` green; 40 tests still passing
 - [ ] **Phase 6 — Source / processing / text components** (2 days)
 - [ ] **Phase 7 — Notebook + Dashboard + collab editor** (2 days)
 - [ ] **Phase 8 — Pipeline + Mobile views** (1 day)
@@ -66,6 +73,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 2 | Yjs-backed DocStore + IndexedDB/WebSocket connectors; 6 doc tests passing (15 total). |
 | 2026-04-26 | 3 | Runtime + VisController/View + paragraphExec hot-swap; 28 tests passing total. |
 | 2026-04-26 | 4 | DuckDB-WASM + Mosaic Coordinator + SQL templates + GPS simulator; 40 tests passing total. |
+| 2026-04-26 | 5 | Mosaic / Semiotic / Vega-Lite / DOM adapters; no per-chart code. |
 
 ## Open notes / decisions
 

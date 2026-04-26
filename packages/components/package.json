@@ -12,9 +12,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@uwdata/mosaic-core": "^0.16.0",
+    "@uwdata/mosaic-sql": "^0.16.0",
+    "@uwdata/vgplot": "^0.16.0",
     "@vistrates/data": "workspace:*",
     "@vistrates/runtime": "workspace:*",
-    "@vistrates/types": "workspace:*"
+    "@vistrates/types": "workspace:*",
+    "semiotic": "^3.4.2",
+    "vega": "^5.30.0",
+    "vega-embed": "^6.29.0",
+    "vega-lite": "^5.23.0"
   },
   "peerDependencies": {
     "react": "^19.0.0",
