@@ -1,6 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import { registerGolem } from './golem.js';
+import { registerCollab } from './collab.js';
 
 const PORT = Number(process.env['PORT'] ?? 3001);
 const HOST = process.env['HOST'] ?? '127.0.0.1';
@@ -18,6 +19,7 @@ async function main(): Promise<void> {
     endpoints: ['/healthz', '/collab/:doc (Phase 11)', '/golem (POST)', '/assets/* (Phase 4+)'],
   }));
 
+  await registerCollab(app);
   await registerGolem(app);
 
   await app.listen({ port: PORT, host: HOST });

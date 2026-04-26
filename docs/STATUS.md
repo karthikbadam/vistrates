@@ -92,7 +92,15 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] `GolemSnapshot` button in the header POSTs to the server and surfaces status inline
   - [x] CORS enabled on the server so the Vite app can call it across ports
   - [x] `pnpm typecheck` green; 40 tests still passing
-- [ ] **Phase 11 — y-websocket collab server + persistence** (1 day)
+- [~] **Phase 11 — y-websocket collab server + persistence** _(in progress — needs runtime smoke test in two browser windows; pausing per user request)_
+  - [x] Server `registerCollab` registers `@fastify/websocket`, exposes `GET /collab/:doc` upgrade route
+  - [x] `y-websocket/bin/utils.setupWSConnection` wires the raw socket
+  - [x] Custom FS persistence (no leveldb): `setPersistence` `bindState` / `writeState` reads/writes `apps/server/data/<docId>.bin` via `Y.encodeStateAsUpdate` / `Y.applyUpdate`
+  - [x] On-update flush: 1 Hz scan over `utils.docs` attaches a single `update` listener per doc
+  - [x] Client gates collab behind `?collab=1`; uses `connectWebsocket` from `@vistrates/doc`
+  - [x] Client also attempts `attachIndexedDB` for local-first persistence; failures are warned but never block boot
+  - [x] `pnpm typecheck` green; 40 tests still passing
+  - [ ] Two-tab cross-browser smoke test (resume task)
 - [ ] **Phase 12 — README + reset + error boundaries + CI green** (1 day)
 
 ## Milestones
@@ -111,6 +119,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | 2026-04-26 | 8 | Pipeline (Dagre DAG) + Mobile views; 4-tab shell. |
 | 2026-04-26 | 9 | Canvas (interactjs drag/resize + markdown notes) + Presentation (TraLuver slide); 6-tab shell. |
 | 2026-04-26 | 10 | Theme (light/dark + density), Typewriter snippet expander, Golem Playwright snapshot endpoint. |
+| 2026-04-26 | 11 | y-websocket Fastify route + custom FS persistence (no leveldb); client connects via `?collab=1`. Two-tab smoke test pending. |
 
 ## Open notes / decisions
 
@@ -119,6 +128,17 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 - Yjs from day one to avoid a v1→v2 doc-model rewrite.
 - Live in-page paragraph eval via `new Function` (trusted authors). Sandboxing via `quickjs-emscripten` is a v2 concern.
 - Hammer.js is dormant — replaced by `interactjs`. `dagre` → `@dagrejs/dagre`.
+
+## Resume notes (2026-04-26 — paused mid-Phase 11)
+
+11/13 phases shipped to `claude/modernize-analytics-platform-ai0FR`. Latest pushed commit covers Phase 11 server + client wiring; what's left:
+
+1. Smoke-test collab end-to-end in two browser windows opened with `?collab=1`. Verify: edits sync via `/collab/:doc`, doc persists to `apps/server/data/<docId>.bin`, restart restores state.
+2. **Phase 12 — Polish.** Top-level `README.md` quickstart, error boundaries around lifecycle methods (mirror original try/catch from `legacy/Vistrates/kTKppb2i-Vistrate.csp` lines 455–461), one-click "Reset doc" button, ensure `pnpm test && pnpm lint && pnpm typecheck` are all green for CI.
+3. Optional: `y-codemirror.next` integration so the CodeMirror editor itself becomes collaborative (not just the doc model).
+4. Optional: structured Vitest coverage for the React shell (e.g. `@testing-library/react` smoke test that boots `RuntimeProvider` and asserts the demo controllers come up).
+
+Resume by reading `docs/PLAN.md` + this file + the latest commit.
 
 ## How to keep this current
 

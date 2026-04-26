@@ -14,7 +14,7 @@ import {
   makeVegaLiteComponent,
   registerBuiltins,
 } from '@vistrates/components';
-import { DocStore } from '@vistrates/doc';
+import { attachIndexedDB, connectWebsocket, DocStore } from '@vistrates/doc';
 import type { ComponentId } from '@vistrates/types';
 import { asComponentId } from '@vistrates/types';
 import * as vg from '@uwdata/vgplot';
@@ -83,8 +83,28 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
 
   useEffect(() => {
     let cancelled = false;
+    let cleanupCollab: (() => void) | undefined;
     void (async () => {
       try {
+        // 0. Local + collab persistence (best-effort; failures are logged
+        //    but never block the boot — the demo still runs in-memory).
+        try {
+          await attachIndexedDB(doc, `vistrates-${DEFAULT_DOC_ID}`);
+        } catch (e) {
+          console.warn('[vistrates] IndexedDB persistence skipped:', e);
+        }
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('collab') === '1') {
+          try {
+            const wsUrl = (import.meta.env.DEV ? 'ws://127.0.0.1:3001' : 'ws://' + window.location.host) + '/collab';
+            const session = await connectWebsocket(doc, { url: wsUrl, room: DEFAULT_DOC_ID });
+            cleanupCollab = () => session.destroy();
+            console.info('[vistrates] collab connected:', wsUrl, DEFAULT_DOC_ID);
+          } catch (e) {
+            console.warn('[vistrates] collab connect failed:', e);
+          }
+        }
+
         // 1. Register built-ins.
         registerBuiltins(runtime);
 
@@ -168,6 +188,7 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
     })();
     return () => {
       cancelled = true;
+      cleanupCollab?.();
     };
   }, [runtime, doc]);
 
