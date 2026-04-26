@@ -19,6 +19,9 @@
     "typecheck": "pnpm -r typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\""
   },
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild"]
+  },
   "devDependencies": {
     "@types/node": "^22.10.0",
     "@typescript-eslint/eslint-plugin": "^8.20.0",

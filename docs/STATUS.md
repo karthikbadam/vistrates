@@ -4,7 +4,7 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 
 ## Phases
 
-- [x] **Phase 0 — Scaffold** _(in progress)_
+- [x] **Phase 0 — Scaffold** _(done)_
   - [x] `git mv` legacy `.csp` tree under `legacy/`
   - [x] pnpm workspace root (`package.json`, `pnpm-workspace.yaml`, `.npmrc`)
   - [x] Strict TypeScript base (`tsconfig.base.json`)
@@ -12,11 +12,16 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
   - [x] Vitest config
   - [x] Prettier config + `.gitignore`
   - [x] In-repo plan + status docs
-  - [ ] Empty package + app stubs (types/runtime/doc/data/components/server/web)
-  - [ ] `pnpm install` succeeds
-  - [ ] `pnpm dev` boots (Vite + Fastify both healthy)
+  - [x] Package + app stubs (types/runtime/doc/data/components/server/web)
+  - [x] `pnpm install` succeeds (367 packages, esbuild build approved)
+  - [x] `pnpm dev` boots (Vite at :5173 + Fastify at :3001 — verified via HTTP smoke test)
 
-- [ ] **Phase 1 — Types + clause hash** (1 day)
+- [x] **Phase 1 — Types + clause hash** _(done)_
+  - [x] `@vistrates/types` package with `JsonValue`, `InteractionClause`, `ComponentOutput`, `VisComponentDefinition`, `VisController`, `DocSnapshot`
+  - [x] Strict typing: branded `Predicate` and `ComponentId`, no `any`
+  - [x] `@vistrates/runtime` clause module: `canonicalizeJson`, `canonicalizeClause`, `hashClause` (Web Crypto + Node fallback)
+  - [x] Vitest: 9/9 passing (key permutation invariance, predicate sensitivity, hex format)
+  - [x] `pnpm typecheck` green across all 7 packages
 - [ ] **Phase 2 — Yjs doc model** (1–2 days)
 - [ ] **Phase 3 — Runtime + paragraph executor** (2 days)
 - [ ] **Phase 4 — DuckDB-WASM + Mosaic Coordinator** (2 days)
@@ -34,6 +39,8 @@ Living checklist. Updated at the end of each phase. Branch: `claude/modernize-an
 | Date (UTC) | Phase | Note |
 | --- | --- | --- |
 | 2026-04-26 | 0 | Branch created, legacy moved, root configs in place. |
+| 2026-04-26 | 0 | All package stubs built; `pnpm install` + `pnpm typecheck` + `pnpm dev` all green. |
+| 2026-04-26 | 1 | Types package complete; clause hash + 9-test suite passing. |
 
 ## Open notes / decisions
 

@@ -1,0 +1,21 @@
+{
+  "name": "@vistrates/doc",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@vistrates/types": "workspace:*",
+    "yjs": "^13.6.20"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
