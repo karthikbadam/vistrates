@@ -34,11 +34,14 @@ vi.mock('@vistrates/data', () => ({
 }));
 
 import { demos } from '../src/defaultDoc.js';
+import { Selection } from '@uwdata/mosaic-core';
 
 const vgStub = new Proxy({}, { get: () => () => document.createElement('div') });
 
 const evalCtx = {
   vg: vgStub,
+  Selection,
+  sharedSelection: Selection.crossfilter(),
   makeMosaicComponent,
   makeVegaLiteComponent,
   makeSemioticComponent,

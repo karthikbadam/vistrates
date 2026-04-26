@@ -60,6 +60,7 @@ export function CanvasView(): JSX.Element {
 
   // Mount the runtime's vis-host divs into the corresponding view objects.
   useEffect(() => {
+    let movedAny = false;
     for (const obj of objects) {
       if (obj.kind !== 'view' || !obj.paragraphId) continue;
       const slot = elementRefs.current.get(obj.id);
@@ -68,7 +69,14 @@ export function CanvasView(): JSX.Element {
       const inner = slot.querySelector('.canvas-content');
       if (inner instanceof HTMLElement && host.parentElement !== inner) {
         inner.replaceChildren(host);
+        movedAny = true;
       }
+    }
+    // Mosaic vgplot's ResizeObserver only re-renders on >4px width change.
+    // Forcing a window resize ensures freshly-adopted charts re-paint into
+    // their new container even when the dimensions happen to match.
+    if (movedAny && typeof window !== 'undefined') {
+      requestAnimationFrame(() => window.dispatchEvent(new Event('resize')));
     }
   }, [hostFor, objects]);
 

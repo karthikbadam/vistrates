@@ -4,6 +4,7 @@ import {
   gpsSimulatorComponent,
   queryableCsvComponent,
   queryableParquetComponent,
+  syntheticExoplanetsComponent,
 } from './sources/index.js';
 import {
   dateFilterComponent,
@@ -32,6 +33,7 @@ export const builtinComponents: readonly AnyVisComponentDefinition[] = [
   queryableCsvComponent,
   queryableParquetComponent,
   gpsSimulatorComponent,
+  syntheticExoplanetsComponent,
   // processing
   filterComponent,
   simpleJoinComponent,

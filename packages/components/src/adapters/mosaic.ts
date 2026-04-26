@@ -31,6 +31,13 @@ export interface MosaicComponentSpec {
   readonly tags?: readonly string[];
   /** Build the vgplot spec given the bound table name and a per-instance Selection. */
   readonly spec: VgplotSpecBuilder;
+  /**
+   * Optional pre-built `Selection`. When multiple charts share the same
+   * Selection, brushing one cross-filters the others — exactly the
+   * Vistrates "linked selection" pattern. Pass a shared
+   * `Selection.crossfilter()` to opt in.
+   */
+  readonly selection?: Selection;
 }
 
 interface MosaicState {
@@ -69,7 +76,9 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
     props: [],
     init() {
       if (!this.view) return;
-      const state: MosaicState = { selection: Selection.crossfilter() };
+      const state: MosaicState = {
+        selection: opts.selection ?? Selection.crossfilter(),
+      };
       stateByController.set(this, state);
 
       // Mirror selection changes back to Vistrates as InteractionClauses.
@@ -99,6 +108,19 @@ export function makeMosaicComponent(opts: MosaicComponentSpec): AnyVisComponentD
           state.rerender?.();
         });
         state.resizeObserver.observe(this.view.element);
+      }
+
+      // Belt-and-suspenders: also re-render on a global resize so charts
+      // recover when their host moves between tabs (Dashboard → Canvas)
+      // without the size changing enough to trip the ResizeObserver.
+      if (typeof window !== 'undefined') {
+        const onWinResize = (): void => state.rerender?.();
+        window.addEventListener('resize', onWinResize);
+        const prev = state.unsubscribe;
+        state.unsubscribe = () => {
+          prev?.();
+          window.removeEventListener('resize', onWinResize);
+        };
       }
     },
     async update(_source) {

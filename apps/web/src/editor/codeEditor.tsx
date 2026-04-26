@@ -2,7 +2,30 @@ import { useEffect, useRef } from 'react';
 import { EditorState } from '@codemirror/state';
 import { EditorView, lineNumbers } from '@codemirror/view';
 import { javascript } from '@codemirror/lang-javascript';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import { tags } from '@lezer/highlight';
 import { typewriterExtension } from './typewriter.js';
+
+/** Syntax color palette tuned for the sharp B/W theme. */
+const syntaxStyle = HighlightStyle.define([
+  { tag: tags.keyword, color: '#dfd0b8' },
+  { tag: tags.controlKeyword, color: '#dfd0b8' },
+  { tag: tags.definitionKeyword, color: '#dfd0b8' },
+  { tag: tags.operatorKeyword, color: '#dfd0b8' },
+  { tag: tags.modifier, color: '#dfd0b8' },
+  { tag: [tags.string, tags.special(tags.string), tags.regexp], color: '#9ae6b4' },
+  { tag: [tags.number, tags.bool, tags.null, tags.atom], color: '#fbb86b' },
+  { tag: [tags.lineComment, tags.blockComment, tags.docComment], color: '#666', fontStyle: 'italic' },
+  { tag: [tags.function(tags.variableName), tags.function(tags.propertyName)], color: '#82c1ff' },
+  { tag: tags.propertyName, color: '#82c1ff' },
+  { tag: tags.className, color: '#dfd0b8' },
+  { tag: tags.typeName, color: '#dfd0b8' },
+  { tag: tags.operator, color: '#888' },
+  { tag: tags.bracket, color: '#888' },
+  { tag: tags.punctuation, color: '#888' },
+  { tag: tags.variableName, color: '#fff' },
+  { tag: tags.invalid, color: '#fc8181' },
+]);
 
 /** A CSS-variable-driven CodeMirror theme that follows the page's
  *  --vs-* tokens, so the editor automatically tracks light/dark. */
@@ -50,6 +73,7 @@ export function CodeEditor({ value, onChange, readOnly = false }: CodeEditorProp
           lineNumbers(),
           javascript(),
           cssVarTheme,
+          syntaxHighlighting(syntaxStyle),
           typewriterExtension,
           EditorState.readOnly.of(readOnly),
           EditorView.updateListener.of((u) => {

@@ -268,19 +268,182 @@ const gpsDemo: Demo = {
   ],
 };
 
-export const demos: readonly Demo[] = [irisDemo, carsDemo, gpsDemo];
+// ----------------------------------------------------- exoplanets demo
+
+/**
+ * Astronomy demo — 1000-row × 6-column synthetic exoplanet catalog.
+ * All 5 charts share the page-wide `sharedSelection` so brushing one
+ * cross-filters the others (the canonical Vistrates linked-selection
+ * pattern). The scatter plot is the primary brush surface; the histograms
+ * + bar chart act as both views and filters.
+ */
+const exoplanetsDemo: Demo = {
+  id: 'exoplanets',
+  title: 'Exoplanets',
+  description:
+    '1000 synthetic exoplanets, 6 columns. Five linked Mosaic vgplot charts share a crossfilter Selection — brush any chart and the rest filter live.',
+  paragraphs: [
+    {
+      paragraphId: 'planets-source',
+      name: 'Synthetic exoplanets (1000 × 6)',
+      defId: 'synthetic-exoplanets',
+      data: { tableName: 'planets', rows: 1000, seed: 42 },
+      visible: false,
+      code: `// Generates 1000 rows × 6 cols (name, host_type, mass_earth, radius_earth,\n// orbital_period_d, discovery_year) directly in DuckDB. Edit data.rows\n// to scale up or down; data.seed makes the catalog reproducible.\nreturn registry['synthetic-exoplanets'];`,
+    },
+    {
+      paragraphId: 'planets-host',
+      name: 'Host star type',
+      defId: 'demo-planets-host',
+      data: {},
+      src: { table: 'planets-source' },
+      code: `// Bar chart of host-star type (M / K / G / F / A). Brushing here
+// cross-filters every other chart on this page via sharedSelection.
+return makeMosaicComponent({
+  id: 'demo-planets-host',
+  name: 'Host star type',
+  version: '0.1.0',
+  selection: sharedSelection,
+  spec: ({ table, selection, width, height }) =>
+    vg.plot(
+      vg.barY(vg.from(table, { filterBy: selection }), {
+        x: 'host_type',
+        y: vg.count(),
+        fill: 'host_type',
+      }),
+      vg.toggleX({ as: selection }),
+      vg.width(width),
+      vg.height(Math.min(height, 240)),
+    ),
+});`,
+    },
+    {
+      paragraphId: 'planets-mass-radius',
+      name: 'Mass vs radius (log–log)',
+      defId: 'demo-planets-mr',
+      data: {},
+      src: { table: 'planets-source' },
+      code: `// Scatter on log axes. Drag a rectangular brush to crossfilter.
+return makeMosaicComponent({
+  id: 'demo-planets-mr',
+  name: 'Mass vs radius',
+  version: '0.1.0',
+  selection: sharedSelection,
+  spec: ({ table, selection, width, height }) =>
+    vg.plot(
+      vg.dot(vg.from(table, { filterBy: selection }), {
+        x: 'mass_earth',
+        y: 'radius_earth',
+        fill: 'host_type',
+        r: 2,
+        fillOpacity: 0.6,
+      }),
+      vg.intervalXY({ as: selection }),
+      vg.xScale('log'),
+      vg.yScale('log'),
+      vg.xLabel('mass (M⊕, log)'),
+      vg.yLabel('radius (R⊕, log)'),
+      vg.width(width),
+      vg.height(Math.min(height, 320)),
+    ),
+});`,
+    },
+    {
+      paragraphId: 'planets-period',
+      name: 'Orbital period (log)',
+      defId: 'demo-planets-period',
+      data: {},
+      src: { table: 'planets-source' },
+      code: `// Histogram of orbital period on a log scale.
+return makeMosaicComponent({
+  id: 'demo-planets-period',
+  name: 'Orbital period',
+  version: '0.1.0',
+  selection: sharedSelection,
+  spec: ({ table, selection, width, height }) =>
+    vg.plot(
+      vg.rectY(vg.from(table, { filterBy: selection }), {
+        x: vg.bin('orbital_period_d', { maxbins: 30 }),
+        y: vg.count(),
+        fill: '#dfd0b8',
+      }),
+      vg.intervalX({ as: selection }),
+      vg.xScale('log'),
+      vg.xLabel('period (days, log)'),
+      vg.width(width),
+      vg.height(Math.min(height, 220)),
+    ),
+});`,
+    },
+    {
+      paragraphId: 'planets-discovery',
+      name: 'Discoveries by year',
+      defId: 'demo-planets-year',
+      data: {},
+      src: { table: 'planets-source' },
+      code: `// Yearly discovery count.
+return makeMosaicComponent({
+  id: 'demo-planets-year',
+  name: 'Discoveries by year',
+  version: '0.1.0',
+  selection: sharedSelection,
+  spec: ({ table, selection, width, height }) =>
+    vg.plot(
+      vg.rectY(vg.from(table, { filterBy: selection }), {
+        x: vg.bin('discovery_year', { maxbins: 34 }),
+        y: vg.count(),
+        fill: '#82c1ff',
+      }),
+      vg.intervalX({ as: selection }),
+      vg.xLabel('discovery year'),
+      vg.width(width),
+      vg.height(Math.min(height, 220)),
+    ),
+});`,
+    },
+    {
+      paragraphId: 'planets-radius-hist',
+      name: 'Radius distribution (log)',
+      defId: 'demo-planets-radius',
+      data: {},
+      src: { table: 'planets-source' },
+      code: `// Radius histogram on log scale.
+return makeMosaicComponent({
+  id: 'demo-planets-radius',
+  name: 'Radius distribution',
+  version: '0.1.0',
+  selection: sharedSelection,
+  spec: ({ table, selection, width, height }) =>
+    vg.plot(
+      vg.rectY(vg.from(table, { filterBy: selection }), {
+        x: vg.bin('radius_earth', { maxbins: 26 }),
+        y: vg.count(),
+        fill: '#9ae6b4',
+      }),
+      vg.intervalX({ as: selection }),
+      vg.xScale('log'),
+      vg.xLabel('radius (R⊕, log)'),
+      vg.width(width),
+      vg.height(Math.min(height, 220)),
+    ),
+});`,
+    },
+  ],
+};
+
+export const demos: readonly Demo[] = [exoplanetsDemo, irisDemo, carsDemo, gpsDemo];
 
 export const DEMOS_BY_ID: Readonly<Record<string, Demo>> = Object.fromEntries(
   demos.map((d) => [d.id, d]),
 );
 
-/** Pick the active demo from `?demo=...` (default: iris). */
+/** Pick the active demo from `?demo=...` (default: exoplanets). */
 function pickActive(): Demo {
-  if (typeof window === 'undefined') return irisDemo;
+  if (typeof window === 'undefined') return exoplanetsDemo;
   const params = new URLSearchParams(window.location.search);
   const id = params.get('demo');
   if (id && DEMOS_BY_ID[id]) return DEMOS_BY_ID[id];
-  return irisDemo;
+  return exoplanetsDemo;
 }
 
 export const activeDemo: Demo = pickActive();

@@ -18,6 +18,7 @@ import { attachIndexedDB, connectWebsocket, DocStore } from '@vistrates/doc';
 import type { ComponentId } from '@vistrates/types';
 import { asComponentId } from '@vistrates/types';
 import * as vg from '@uwdata/vgplot';
+import { Selection } from '@uwdata/mosaic-core';
 import { DEFAULT_DOC_ID, DEFAULT_DOC_TITLE, demoDoc } from './defaultDoc.js';
 
 interface RuntimeCtxValue {
@@ -63,6 +64,11 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
   const evalCtx = useMemo(
     () => ({
       vg,
+      Selection,
+      // A page-wide shared crossfilter Selection. Demos that wire multiple
+      // Mosaic vgplot charts through the same Selection get linked-selection
+      // cross-filtering for free — brushing one chart filters the rest.
+      sharedSelection: Selection.crossfilter(),
       makeMosaicComponent,
       makeVegaLiteComponent,
       registry: Object.fromEntries(builtinComponents.map((d) => [d.id, d])),

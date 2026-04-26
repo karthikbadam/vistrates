@@ -34,7 +34,14 @@ declare module '@uwdata/vgplot' {
   export const intervalX: AnyFn;
   export const intervalY: AnyFn;
   export const intervalXY: AnyFn;
+  export const toggleX: AnyFn;
   export const toggleY: AnyFn;
+  export const toggleZ: AnyFn;
+  export const xLabel: AnyFn;
+  export const yLabel: AnyFn;
+  export const xScale: AnyFn;
+  export const yScale: AnyFn;
+  export const bin: AnyFn;
   export const highlight: AnyFn;
   export const legend: AnyFn;
   export const slider: AnyFn;

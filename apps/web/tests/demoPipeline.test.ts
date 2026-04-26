@@ -28,12 +28,15 @@ vi.mock('@vistrates/data', () => ({
 }));
 
 import { evaluateParagraph } from '@vistrates/runtime';
+import { Selection } from '@uwdata/mosaic-core';
 import { demos } from '../src/defaultDoc.js';
 
 const vgStub = new Proxy({}, { get: () => () => document.createElement('div') });
 
 const evalCtx = {
   vg: vgStub,
+  Selection,
+  sharedSelection: Selection.crossfilter(),
   makeMosaicComponent,
   makeVegaLiteComponent,
   makeSemioticComponent,

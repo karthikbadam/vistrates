@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { evaluateParagraph } from '@vistrates/runtime';
+import { Selection } from '@uwdata/mosaic-core';
 import {
   builtinComponents,
   makeMosaicComponent,
@@ -16,6 +17,8 @@ const vgStub = new Proxy({}, { get: () => () => ({}) });
 
 const evalCtx = {
   vg: vgStub,
+  Selection,
+  sharedSelection: Selection.crossfilter(),
   makeMosaicComponent,
   makeVegaLiteComponent,
   makeSemioticComponent,
@@ -23,8 +26,8 @@ const evalCtx = {
 };
 
 describe('demos', () => {
-  it('exposes three demos: iris, cars, gps', () => {
-    expect(demos.map((d) => d.id)).toEqual(['iris', 'cars', 'gps']);
+  it('exposes the expected demos', () => {
+    expect(demos.map((d) => d.id)).toEqual(['exoplanets', 'iris', 'cars', 'gps']);
   });
 
   for (const demo of demos) {

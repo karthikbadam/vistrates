@@ -6,7 +6,6 @@ import { PipelineView } from './PipelineView.js';
 import { MobileView } from './MobileView.js';
 import { CanvasView } from './CanvasView.js';
 import { PresentationView } from './PresentationView.js';
-import { ThemeToggle } from './ThemeToggle.js';
 import { GolemSnapshot } from './GolemSnapshot.js';
 import { ResetButton } from './ResetButton.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
@@ -63,7 +62,6 @@ function Shell(): JSX.Element {
           <FileIO />
           <GolemSnapshot />
           <ResetButton />
-          <ThemeToggle />
         </div>
       </header>
       <BootGate>

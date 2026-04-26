@@ -15,35 +15,7 @@
   --vs-ok: #9ae6b4;
 }
 
-:root[data-theme='light'] {
-  --vs-bg: #ffffff;
-  --vs-fg: #000000;
-  --vs-muted: #666666;
-  --vs-accent: #2b6cb0;
-  --vs-accent-soft: rgba(43, 108, 176, 0.08);
-  --vs-card: #ffffff;
-  --vs-card-2: #fafafa;
-  --vs-border: rgba(0, 0, 0, 0.14);
-  --vs-border-strong: rgba(0, 0, 0, 0.32);
-  --vs-error: #c53030;
-  --vs-ok: #2f855a;
-}
-
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme]) {
-    --vs-bg: #ffffff;
-    --vs-fg: #000000;
-    --vs-muted: #666666;
-    --vs-accent: #2b6cb0;
-    --vs-accent-soft: rgba(43, 108, 176, 0.08);
-    --vs-card: #ffffff;
-    --vs-card-2: #fafafa;
-    --vs-border: rgba(0, 0, 0, 0.14);
-    --vs-border-strong: rgba(0, 0, 0, 0.32);
-    --vs-error: #c53030;
-    --vs-ok: #2f855a;
-  }
-}
+/* Dark-only — light theme variant intentionally omitted. */
 
 * {
   box-sizing: border-box;
