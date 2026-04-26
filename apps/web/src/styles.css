@@ -378,6 +378,78 @@ body {
   color: var(--vs-error);
 }
 
+/* --- Demo cards --------------------------------------------------------- */
+
+.demo-cards {
+  margin-bottom: 24px;
+}
+
+.demo-cards header h2 {
+  margin: 0 0 4px;
+  font-size: 18px;
+}
+
+.demo-cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.demo-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 14px;
+  background: var(--vs-card);
+  border: 1px solid var(--vs-border);
+  border-radius: 8px;
+  text-decoration: none;
+  color: inherit;
+  transition: border-color 0.15s, transform 0.15s;
+}
+
+.demo-card:hover {
+  border-color: var(--vs-accent);
+  transform: translateY(-1px);
+}
+
+.demo-card.active {
+  border-color: var(--vs-accent);
+  background: linear-gradient(135deg, var(--vs-card) 0%, rgba(122, 162, 255, 0.08) 100%);
+}
+
+.demo-card-id {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 11px;
+  color: var(--vs-accent);
+}
+
+.demo-card h3 {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.demo-card p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--vs-muted);
+  line-height: 1.4;
+}
+
+.demo-card-badge {
+  align-self: flex-start;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: var(--vs-accent);
+  color: var(--vs-bg);
+  padding: 2px 8px;
+  border-radius: 3px;
+  font-weight: 500;
+}
+
 /* --- Dashboard ---------------------------------------------------------- */
 
 .dashboard {

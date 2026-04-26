@@ -7,8 +7,8 @@ The original was built on Webstrates / Codestrates, both unmaintained as of 2026
 ## Quickstart
 
 ```bash
-git clone https://github.com/karthikbadam/Vistrates.git
-cd Vistrates
+git clone https://github.com/karthikbadam/vistrates.git
+cd vistrates
 pnpm install
 pnpm dev
 ```
@@ -19,9 +19,25 @@ Try `?demo=cars`, `?demo=gps`, or `?collab=1` (the Demo picker in the header swi
 
 ## Demos
 
-- **iris** — Iris dataset → filter → Mosaic vgplot bar chart + Vega-Lite scatter. Brushing the bar chart filters the scatter via a shared `InteractionClause`.
-- **cars** — `mtcars` → Mosaic vgplot avg-MPG bar + Vega-Lite cyl×origin heatmap.
-- **gps** — `gps-simulator` streams synthetic GPS rows into DuckDB on a 250 ms tick → vgplot per-agent counts + Vega-Lite scatter of lat/lon. Live data; everything updates reactively.
+Live (after Pages deploy): https://karthikbadam.github.io/vistrates/
+
+| Demo | URL | What it shows |
+| --- | --- | --- |
+| **iris** | [`?demo=iris`](https://karthikbadam.github.io/vistrates/?demo=iris) | Iris dataset → filter → Mosaic vgplot bar chart + Vega-Lite scatter. Brushing the bar chart filters the scatter via a shared `InteractionClause`. |
+| **cars** | [`?demo=cars`](https://karthikbadam.github.io/vistrates/?demo=cars) | `mtcars` → Mosaic vgplot avg-MPG bar + Vega-Lite cyl×origin heatmap. |
+| **gps** | [`?demo=gps`](https://karthikbadam.github.io/vistrates/?demo=gps) | `gps-simulator` streams synthetic GPS rows into DuckDB on a 250 ms tick → vgplot per-agent counts + Vega-Lite scatter of lat/lon. Live data; everything updates reactively. |
+
+Locally:
+
+```bash
+pnpm dev
+# then open
+open "http://127.0.0.1:5173/?demo=iris"
+open "http://127.0.0.1:5173/?demo=cars"
+open "http://127.0.0.1:5173/?demo=gps"
+```
+
+The Dashboard tab also has clickable demo cards at the top so you can switch between them in-app.
 
 ## Architecture
 

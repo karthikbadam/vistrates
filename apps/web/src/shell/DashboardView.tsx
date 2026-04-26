@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { demoDoc } from '../defaultDoc.js';
 import { useRuntime, useTopologyTick } from '../runtimeContext.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
+import { DemoCards } from './DemoCards.js';
 
 interface ViewCardProps {
   readonly paragraphId: string;
@@ -36,12 +37,15 @@ function ViewCard({ paragraphId, name }: ViewCardProps): React.JSX.Element {
 
 export function DashboardView(): React.JSX.Element {
   return (
-    <section className="dashboard">
-      {demoDoc.map((p) => (
-        <ErrorBoundary key={p.paragraphId} label={p.name}>
-          <ViewCard paragraphId={p.paragraphId} name={p.name} />
-        </ErrorBoundary>
-      ))}
-    </section>
+    <>
+      <DemoCards />
+      <section className="dashboard">
+        {demoDoc.map((p) => (
+          <ErrorBoundary key={p.paragraphId} label={p.name}>
+            <ViewCard paragraphId={p.paragraphId} name={p.name} />
+          </ErrorBoundary>
+        ))}
+      </section>
+    </>
   );
 }
