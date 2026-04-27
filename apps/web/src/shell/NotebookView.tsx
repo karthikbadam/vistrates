@@ -1,16 +1,17 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { evaluateParagraph } from '@vistrates/runtime';
 import { asComponentId } from '@vistrates/types';
 import { CodeEditor } from '../editor/codeEditor.js';
 import { demoDoc, type DemoParagraphConfig } from '../defaultDoc.js';
 import { useRuntime, useTopologyTick } from '../runtimeContext.js';
+import { useHostSlot } from './useHostSlot.js';
 
 interface ParagraphCardProps {
   readonly config: DemoParagraphConfig;
 }
 
 function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
-  const { runtime, evalCtx, hostFor } = useRuntime();
+  const { runtime, evalCtx } = useRuntime();
   const [code, setCode] = useState(config.code ?? '');
   const [status, setStatus] = useState<{ kind: 'idle' | 'ok' | 'error'; message?: string }>({
     kind: 'idle',
@@ -21,20 +22,8 @@ function ParagraphCard({ config }: ParagraphCardProps): React.JSX.Element {
   const controller = runtime.getController(asComponentId(config.paragraphId));
   const output = controller?.output;
 
-  // Adopt the runtime-owned vis-host into this card's slot for visible
-  // (visualization) paragraphs. The host is a singleton owned by the
-  // runtime — switching tabs simply moves the same DOM node, so charts
-  // keep their state.
   const hasView = config.visible !== false;
-  useEffect(() => {
-    if (!hasView) return;
-    const slot = slotRef.current;
-    if (!slot) return;
-    const host = hostFor(config.paragraphId);
-    if (host.parentElement !== slot) {
-      slot.replaceChildren(host);
-    }
-  }, [hasView, hostFor, config.paragraphId]);
+  useHostSlot(hasView ? config.paragraphId : undefined, slotRef);
 
   const onRun = async (): Promise<void> => {
     const result = evaluateParagraph(code, evalCtx);

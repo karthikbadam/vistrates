@@ -1,7 +1,8 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import { demoDoc } from '../defaultDoc.js';
-import { useRuntime, useTopologyTick } from '../runtimeContext.js';
+import { useTopologyTick } from '../runtimeContext.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
+import { useHostSlot } from './useHostSlot.js';
 
 interface ViewCardProps {
   readonly paragraphId: string;
@@ -9,22 +10,9 @@ interface ViewCardProps {
 }
 
 function ViewCard({ paragraphId, name }: ViewCardProps): React.JSX.Element {
-  const { hostFor } = useRuntime();
   const slotRef = useRef<HTMLDivElement | null>(null);
   useTopologyTick();
-
-  useEffect(() => {
-    const slot = slotRef.current;
-    if (!slot) return;
-    const host = hostFor(paragraphId);
-    // The runtime mounted the visualization into `host`. We slot it into the DOM.
-    if (host.parentElement !== slot) {
-      slot.replaceChildren(host);
-    }
-    return () => {
-      // Don't detach on unmount — the runtime owns this host across renders.
-    };
-  }, [hostFor, paragraphId]);
+  useHostSlot(paragraphId, slotRef);
 
   return (
     <article className="view-card">

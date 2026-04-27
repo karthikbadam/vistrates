@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState, type JSX } from 'react';
 import { demoDoc } from '../defaultDoc.js';
-import { useRuntime, useTopologyTick } from '../runtimeContext.js';
+import { useTopologyTick } from '../runtimeContext.js';
+import { useHostSlot } from './useHostSlot.js';
 
 export function PresentationView(): JSX.Element {
-  const { hostFor } = useRuntime();
   const [slide, setSlide] = useState(0);
   const slotRef = useRef<HTMLDivElement | null>(null);
   useTopologyTick();
@@ -12,13 +12,7 @@ export function PresentationView(): JSX.Element {
   // and a footer with slide counter. Built-in keyboard nav.
   const visible = demoDoc.filter((p) => p.visible !== false);
   const current = visible[slide];
-
-  useEffect(() => {
-    const el = slotRef.current;
-    if (!el || !current) return;
-    const host = hostFor(current.paragraphId);
-    if (host.parentElement !== el) el.replaceChildren(host);
-  }, [hostFor, current]);
+  useHostSlot(current?.paragraphId, slotRef);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent): void => {

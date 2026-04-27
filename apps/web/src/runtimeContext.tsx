@@ -170,7 +170,14 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
           });
         }
 
-        // 4. Instantiate controllers in pipeline order, preferring persisted data.
+        // 4. Instantiate controllers in pipeline order, preferring persisted
+        //    data. Critically, we pass `initialSrc` here so each controller's
+        //    `init()` can resolve `this.src.<slot>` to the already-instantiated
+        //    upstream's output (e.g. a Mosaic Selection from the
+        //    `crossfilter-selection` paragraph). If we waited until after the
+        //    instantiate loop to bind src, every chart's init would see a null
+        //    selection and fall back to a per-instance Selection — breaking
+        //    linked-selection cross-filtering.
         const { VisViewImpl } = await import('@vistrates/runtime');
         for (const p of demoDoc) {
           const persisted = persistedById.get(p.paragraphId);
@@ -181,11 +188,16 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
             defId: p.defId,
             friendlyName: p.name,
             initialData,
+            ...(p.src ? { initialSrc: p.src } : {}),
             view,
           });
         }
 
-        // 5. Wire src bindings (post-instantiate so all controllers exist).
+        // 5. (No-op now — initialSrc above already wired everything. Kept as a
+        //    defensive bindSrc pass in case a paragraph references a sibling
+        //    that wasn't yet instantiated when init ran. bindSrc seeds an
+        //    update if the upstream already has output, so this is safe to
+        //    re-run idempotently.)
         for (const p of demoDoc) {
           if (!p.src) continue;
           for (const [slot, upstream] of Object.entries(p.src)) {
