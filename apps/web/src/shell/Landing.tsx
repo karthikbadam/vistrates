@@ -16,7 +16,7 @@ export function Landing(): JSX.Element {
       <header className="landing-nav">
         <div className="landing-brand">
           <h1>Vistrates</h1>
-          <span className="landing-version">0.1</span>
+          <span className="landing-version">2.0</span>
         </div>
         <a href={REPO} target="_blank" rel="noopener noreferrer" className="landing-nav-link">
           GitHub
@@ -52,8 +52,8 @@ export function Landing(): JSX.Element {
         </div>
 
         <p className="landing-note">
-          v0.1 — under active development. The literate runtime + 5-chart linked-selection demo are
-          working end-to-end.
+          v2.0 — modern TypeScript rebuild. The literate runtime + 5-chart linked-selection demo
+          are working end-to-end.
         </p>
       </section>
 
