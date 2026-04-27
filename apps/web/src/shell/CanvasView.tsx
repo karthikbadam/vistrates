@@ -128,13 +128,13 @@ export function CanvasView(): JSX.Element {
             interact.modifiers.restrictSize({ min: { width: 220, height: 160 } }),
           ],
         });
-      // Initialize transform from state.
+      // Seed dataset for interactjs's drag delta accumulator. Inline
+      // styles for transform/width/height are set on the JSX element so
+      // layout is correct from the first commit (before any effect runs);
+      // interactjs writes to those same styles directly during drag.
       el.dataset['x'] = String(obj.x);
       el.dataset['y'] = String(obj.y);
       el.dataset['rot'] = String(obj.rotation);
-      el.style.transform = `translate(${obj.x}px, ${obj.y}px) rotate(${obj.rotation}deg)`;
-      el.style.width = `${obj.w}px`;
-      el.style.height = `${obj.h}px`;
       cleanups.push(() => interactable.unset());
     }
     return () => {
@@ -182,6 +182,11 @@ export function CanvasView(): JSX.Element {
               else elementRefs.current.delete(obj.id);
             }}
             className={`canvas-object canvas-${obj.kind}`}
+            style={{
+              transform: `translate(${obj.x}px, ${obj.y}px) rotate(${obj.rotation}deg)`,
+              width: `${obj.w}px`,
+              height: `${obj.h}px`,
+            }}
           >
             <header className="canvas-handle">
               <span>{obj.kind === 'view' ? obj.paragraphId : 'Note'}</span>
