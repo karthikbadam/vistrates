@@ -11,7 +11,22 @@ import { ResetButton } from './ResetButton.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { DemoPicker } from './DemoPicker.js';
 import { FileIO } from './FileIO.js';
+import { Landing } from './Landing.js';
 import { activeDemo } from '../defaultDoc.js';
+
+/**
+ * URL contract:
+ *   /                    → Landing page
+ *   /?demo=<id>          → app shell, that demo active
+ *   /?demo=<id>&collab=1 → ditto + websocket collab
+ *
+ * The landing page is the default entry; clicking any demo card navigates
+ * to ?demo=<id>, which boots the runtime + the chosen demo.
+ */
+function shouldShowApp(): boolean {
+  if (typeof window === 'undefined') return false;
+  return new URLSearchParams(window.location.search).has('demo');
+}
 
 type Tab = 'notebook' | 'dashboard' | 'pipeline' | 'canvas' | 'present' | 'mobile';
 
@@ -41,10 +56,10 @@ function Shell(): JSX.Element {
   return (
     <main className="app">
       <header className="app-header">
-        <div className="brand">
+        <a className="brand" href="./" title="Back to landing">
           <h1>Vistrates</h1>
           <span className="brand-sub">{activeDemo.title}</span>
-        </div>
+        </a>
         <nav className="tabs">
           {(['dashboard', 'notebook', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
             <button
@@ -64,6 +79,7 @@ function Shell(): JSX.Element {
           <ResetButton />
         </div>
       </header>
+
       <BootGate>
         {tab === 'dashboard' ? (
           <DashboardView />
@@ -86,9 +102,13 @@ function Shell(): JSX.Element {
 export function App(): JSX.Element {
   return (
     <ErrorBoundary label="Vistrates shell">
-      <RuntimeProvider>
-        <Shell />
-      </RuntimeProvider>
+      {shouldShowApp() ? (
+        <RuntimeProvider>
+          <Shell />
+        </RuntimeProvider>
+      ) : (
+        <Landing />
+      )}
     </ErrorBoundary>
   );
 }
