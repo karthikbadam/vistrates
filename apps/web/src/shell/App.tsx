@@ -61,7 +61,7 @@ function Shell(): JSX.Element {
           <span className="brand-sub">{activeDemo.title}</span>
         </a>
         <nav className="tabs">
-          {(['dashboard', 'notebook', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
+          {(['notebook', 'dashboard', 'pipeline', 'canvas', 'present', 'mobile'] as const).map((t) => (
             <button
               key={t}
               type="button"

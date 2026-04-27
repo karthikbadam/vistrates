@@ -4,7 +4,7 @@
 :root[data-theme='dark'] {
   --vs-bg: #000000;          /* sharp black */
   --vs-fg: #ffffff;          /* sharp white */
-  --vs-muted: #888888;       /* mid gray, readable on black */
+  --vs-muted: #b0b0b0;       /* mid gray, strong contrast on black (8.7:1) */
   --vs-accent: #dfd0b8;      /* warm cream */
   --vs-accent-soft: rgba(223, 208, 184, 0.12);
   --vs-card: #000000;        /* same as bg — separation via border only */
@@ -66,7 +66,7 @@ a:hover {
 /* --- Landing page ------------------------------------------------------- */
 
 .landing {
-  max-width: 880px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 32px 32px 96px;
 }
@@ -129,14 +129,15 @@ a:hover {
 }
 
 .landing-body {
-  max-width: 640px;
+  max-width: 720px;
   margin: 0 0 36px;
 }
 
 .landing-body p {
   font-size: 16px;
   line-height: 1.6;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
+  opacity: 0.85;
   margin: 0 0 18px;
 }
 
@@ -218,7 +219,8 @@ a:hover {
 
 .landing-demos header p {
   margin: 0;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
+  opacity: 0.78;
   font-size: 14px;
 }
 
@@ -265,7 +267,8 @@ a:hover {
   margin: 0;
   font-size: 13px;
   line-height: 1.5;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
+  opacity: 0.78;
   flex: 1;
 }
 
@@ -294,14 +297,16 @@ a:hover {
   margin: 0;
   font-size: 13px;
   line-height: 1.55;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
+  opacity: 0.78;
 }
 
 .landing-footer {
   border-top: 1px solid var(--vs-border);
   padding-top: 32px;
   font-size: 12px;
-  color: var(--vs-muted);
+  color: var(--vs-fg);
+  opacity: 0.7;
 }
 
 .landing-footer p {
