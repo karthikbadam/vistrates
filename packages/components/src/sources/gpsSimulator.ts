@@ -1,5 +1,10 @@
 import type { AnyVisComponentDefinition, AnyVisController } from '@vistrates/types';
-import { describeTable, startGpsSimulator, type GpsSimulatorHandle } from '@vistrates/data';
+import {
+  describeTable,
+  getCoordinator,
+  startGpsSimulator,
+  type GpsSimulatorHandle,
+} from '@vistrates/data';
 import { asNumber, asString, readDataObject } from '../dataAccess.js';
 
 interface GpsSimulatorData {
@@ -56,10 +61,22 @@ export const gpsSimulatorComponent: AnyVisComponentDefinition = {
 
     const state: GpsSimulatorState = { handle };
     if (refreshMs > 0) {
+      // Mosaic Coordinator caches query results by SQL string. Since the
+      // gps_stream table is mutating under us (rows being INSERTed every
+      // tick), the cached results go stale immediately. Clear the cache
+      // before nudging the output so downstream charts re-query against
+      // the actual current row set.
+      const coord = await getCoordinator();
       state.refreshIntervalId = setInterval(() => {
+        try {
+          coord.clear({ cache: true, clients: false });
+        } catch (err: unknown) {
+          console.warn('[vistrates] coord.clear failed:', err);
+        }
         // Re-emit output to nudge downstream observers — same shape, but
         // a fresh object reference fires outputChanged on the topology
-        // bus and the Mosaic adapter re-runs its update().
+        // bus and the Mosaic adapter re-runs its update() with a fresh
+        // (uncached) query.
         this.output = { kind: 'table', tableName, schema };
       }, refreshMs);
     }
