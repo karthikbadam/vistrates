@@ -50,11 +50,6 @@ export function Landing(): JSX.Element {
             View source
           </a>
         </div>
-
-        <p className="landing-note">
-          v2.0 — modern TypeScript rebuild. The literate runtime + 5-chart linked-selection demo
-          are working end-to-end.
-        </p>
       </section>
 
       <section className="landing-demos">
