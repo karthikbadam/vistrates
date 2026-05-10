@@ -179,7 +179,13 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
         //    selection and fall back to a per-instance Selection — breaking
         //    linked-selection cross-filtering.
         const { VisViewImpl } = await import('@vistrates/runtime');
+        let didInstantiate = false;
         for (const p of demoDoc) {
+          // Idempotent: React StrictMode runs effects twice in dev, and the
+          // useMemo'd Runtime persists across the double-invoke. Skip
+          // already-instantiated controllers so the second pass is a no-op.
+          if (runtime.getController(asComponentId(p.paragraphId))) continue;
+          didInstantiate = true;
           const persisted = persistedById.get(p.paragraphId);
           const initialData = (persisted?.data ?? p.data) as never;
           const view = new VisViewImpl({ mode: 'dom', host: hostFor(p.paragraphId) });
@@ -193,15 +199,16 @@ export function RuntimeProvider({ children }: RuntimeProviderProps): ReactNode {
           });
         }
 
-        // 5. (No-op now — initialSrc above already wired everything. Kept as a
-        //    defensive bindSrc pass in case a paragraph references a sibling
-        //    that wasn't yet instantiated when init ran. bindSrc seeds an
-        //    update if the upstream already has output, so this is safe to
-        //    re-run idempotently.)
-        for (const p of demoDoc) {
-          if (!p.src) continue;
-          for (const [slot, upstream] of Object.entries(p.src)) {
-            runtime.bindSrc(asComponentId(p.paragraphId), slot, asComponentId(upstream));
+        // 5. Defensive bindSrc pass — only on a fresh boot. initialSrc above
+        //    already wired everything; re-binding on the second StrictMode
+        //    pass would needlessly emit topology events and re-run updates,
+        //    causing a flicker.
+        if (didInstantiate) {
+          for (const p of demoDoc) {
+            if (!p.src) continue;
+            for (const [slot, upstream] of Object.entries(p.src)) {
+              runtime.bindSrc(asComponentId(p.paragraphId), slot, asComponentId(upstream));
+            }
           }
         }
 
