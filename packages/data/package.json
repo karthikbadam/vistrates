@@ -1,0 +1,24 @@
+{
+  "name": "@vistrates/data",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@duckdb/duckdb-wasm": "^1.29.1-dev206.0",
+    "@uwdata/mosaic-core": "^0.16.0",
+    "@uwdata/mosaic-sql": "^0.16.0",
+    "@vistrates/types": "workspace:*",
+    "apache-arrow": "^21.0.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}

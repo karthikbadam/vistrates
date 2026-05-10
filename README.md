@@ -1,49 +1,121 @@
-__Note: This repository is currently under construction. In the coming months, it will be updated with a wiki for installation and usage instructions.__
+# Vistrates
 
-# Try Vistrates (New!)
+A modern TypeScript + Node rebuild of [Vistrates](https://hcil.umd.edu/vistrates/) — a literate, reactive component platform for visual analytics, originally introduced by Badam et al. at IEEE VIS 2018.
 
-You can try Vistrates and check out some of our examples on [vistrates.org](https://vistrates.org).
+The original was built on Webstrates / Codestrates, both unmaintained as of 2026. This rebuild keeps the ideas — reactive component dataflow, multi-level views (Notebook / Dashboard / Pipeline / Canvas / Presentation / Mobile), live in-page paragraph evaluation, real-time collaboration — and drops the substrate. The original `.csp` packages are kept under `legacy/` for reference only.
 
-For a quick overview of Vistrates, see our [video demonstration](https://www.youtube.com/watch?v=nMmiWBJoJUc) or watch our [research talk with a live demo](https://vimeo.com/299858359) at IEEE VIS 2018. 
+## Quickstart
 
-## Vistrates Framework and Packages
+```bash
+git clone https://github.com/karthikbadam/vistrates.git
+cd vistrates
+pnpm install
+pnpm dev
+```
 
-Vistrates is a literate computing platform for developing, assembling, sharing, and reusing visualization components in data analytics. In contrast to other literate computing platforms, Vistrates allows you to work at multiple abstraction levels: a interactive programming view for coding, a dashboard for exploring visualizations, a canvas for annotation, and a presentation view for showcasing results. New abstraction levels can also be developed within Vistrates since it is based on the concept of information substrates.
+Open <http://127.0.0.1:5173>. The Vite SPA + Fastify server boot together. The default demo (`?demo=iris`) loads the Iris CSV into DuckDB-WASM and renders three linked views.
 
-Vistrates is built on top of [Codestrates](https://github.com/Webstrates/Codestrates). This repository contains features for visualization and data analytics in the form of components, which can be easily added or removed. But, first remember to install the Vistrates package, which contains the core framework, on a codestrate to turn it into a vistrate.
+Try `?demo=cars`, `?demo=gps`, or `?collab=1` (the Demo picker in the header switches demos for you).
 
-<!---## Demo  To test the Vistrates framework, you can try our [public hosting](https://webstrates.umd.edu/Codestrate/?copy) at University of Maryland.-->
+## Demos
 
-## Installation
+Live (after Pages deploy): https://karthikbadam.github.io/vistrates/
 
-To use Vistrates you need to setup a [codestrate](http://codestrates.org) first. Refer to the [Codestrates GitHub repository](https://github.com/Webstrates/Codestrates) for instructions on how to set one up. 
+| Demo | URL | What it shows |
+| --- | --- | --- |
+| **iris** | [`?demo=iris`](https://karthikbadam.github.io/vistrates/?demo=iris) | Iris dataset → filter → Mosaic vgplot bar chart + Vega-Lite scatter. Brushing the bar chart filters the scatter via a shared `InteractionClause`. |
+| **cars** | [`?demo=cars`](https://karthikbadam.github.io/vistrates/?demo=cars) | `mtcars` → Mosaic vgplot avg-MPG bar + Vega-Lite cyl×origin heatmap. |
+| **gps** | [`?demo=gps`](https://karthikbadam.github.io/vistrates/?demo=gps) | `gps-simulator` streams synthetic GPS rows into DuckDB on a 250 ms tick → vgplot per-agent counts + Vega-Lite scatter of lat/lon. Live data; everything updates reactively. |
 
-### Installing and Updating Packages
+Locally:
 
-Selecting the _Install and Update Packages_ entry in the menu will open a dialog, where one can select packages to install or update.
+```bash
+pnpm dev
+# then open
+open "http://127.0.0.1:5173/?demo=iris"
+open "http://127.0.0.1:5173/?demo=cars"
+open "http://127.0.0.1:5173/?demo=gps"
+```
 
-### Pushing Packages
+The Dashboard tab also has clickable demo cards at the top so you can switch between them in-app.
 
-When developing new packages or modifying existing packages, the packages can be pushed to another vistrate (e.g. the _Vistrate-Packages_ vistrate). This is done by using the _Push Packages_ entry in the menu.
+## Architecture
 
-### Removing Packages
+| Package | Purpose |
+| --- | --- |
+| `packages/types` | Shared types — branded `Predicate` and `ComponentId`, `JsonValue`, `InteractionClause` (the **hashable interaction state**), `ComponentOutput`, fully generic `VisComponentDefinition` + `VisController`, `DocSnapshot` |
+| `packages/runtime` | `Runtime`, `VisController`, `VisView`, paragraph executor (live `new Function` eval w/ hot-swap), clause canonicalizer + SHA-256 hash, topology event stream |
+| `packages/doc` | Yjs-backed `DocStore` + IndexedDB local persistence + WebSocket collab connector |
+| `packages/data` | DuckDB-WASM facade + Mosaic Coordinator + CSV / Parquet loaders + GPS simulator + SQL templates (filter, join, group-by, date-filter, gps-filter) |
+| `packages/components` | Adapter components (Mosaic vgplot / Semiotic / Vega-Lite / DOM) + 13 built-in source/processing/text components, all SQL-backed |
+| `packages/server` | Fastify Node server: y-websocket sync (`/collab/:doc` with on-disk Y.Doc persistence), Playwright "Golem" snapshot endpoint (`POST /golem`), CORS |
+| `apps/web` | Vite + React 19 SPA: 6-tab shell (Dashboard / Notebook / Pipeline / Canvas / Present / Mobile), CodeMirror 6 editor with Typewriter snippets, light/dark theme, demo picker, GH Pages-ready build |
 
-Removing packages is done by selecting the _Remove Packages_ entry in the menu. It will open a dialog, where one can select the packages, that should be removed from a vistrate.
+## The hashable interaction state
 
-**Hint**: Packages section should not just be deleted but removed using the dialog.
+The original Vistrates passed SearchJS query blobs between components. We replaced that with a typed `InteractionClause` whose canonical JSON form (sorted keys, sorted clients) hashes via SHA-256 to a stable hex digest. The same brush twice → same hash. Maps 1:1 onto Mosaic's clause shape (`source / clients / predicate / value / schema`).
 
-## Disclaimer
+```ts
+interface InteractionClause {
+  readonly source: string;
+  readonly clients: readonly string[];
+  readonly predicate: Predicate;       // canonical SQL fragment
+  readonly value: JsonValue;
+  readonly schema: ClauseSchema;
+}
+```
 
-Vistrates is a research prototype in active development. Many features are still experimental and yet to be properly documented.
+This is the lingua franca for cross-component selection and the cache key for memoized queries.
+
+## No per-chart implementations
+
+Visualizations come "for free" via four adapters in `packages/components/src/adapters/`:
+
+- **`makeMosaicComponent`** — wraps a vgplot spec; subscribes to a per-instance `Selection`; mirrors Mosaic clauses out as Vistrates `InteractionClause`s.
+- **`makeSemioticComponent`** — mounts a Semiotic React frame (XYFrame, OrdinalFrame, NetworkFrame, etc.) inside a `createRoot` island; `propsBuilder` receives rows + an `emitClause` callback.
+- **`makeVegaLiteComponent`** — pulls rows from DuckDB, inlines into spec, renders via `vega-embed`.
+- **`makeDomComponent`** — escape hatch for any DOM library (Leaflet, Plotly, custom D3) with `mount`/`update`/`unmount` lifecycle.
+
+All adapters use a `WeakMap<AnyVisController, State>` so factory-returned definitions can be safely instantiated multiple times.
+
+## Live coding
+
+Each notebook paragraph is a CodeMirror 6 editor (one-dark + JS lang + Typewriter snippet expander). The Run button calls `evaluateParagraph(code, ctx)` against a curated context (`vg`, `makeMosaicComponent`, `makeVegaLiteComponent`, `registry`) and hot-swaps the resulting `VisComponentDefinition` into the live controller — `destroy → swap → init → update(undefined)`. Type `vc⇥`, `mosaic⇥`, or `vega⇥` to expand a skeleton.
+
+## Save / load `.vistrate` files
+
+The header has Save and Load buttons. **Save** downloads the live `Y.Doc` as a `<demo>-<timestamp>.vistrate` binary (the same `Y.encodeStateAsUpdate` format the y-websocket server persists). **Load** picks a `.vistrate` file, merges it into the current doc via `Y.applyUpdate`, and reloads the page so the runtime re-instantiates against the restored state. Round-trips cleanly with collab — the file format is identical on both sides.
+
+`RuntimeProvider` is idempotent on `addSection` and reads paragraph `data` / `code` from the doc snapshot when present, so loaded files restore your edits without resetting the demo wiring.
+
+## Real-time collaboration
+
+Open the same URL with `?collab=1` in two browser windows: doc state syncs through the Fastify y-websocket route (`/collab/:doc`) and persists to disk under `packages/server/data/<docId>.bin`. Both browsers see each other's edits within ~100 ms.
+
+```bash
+# Tab 1
+open http://localhost:5173/?collab=1
+# Tab 2
+open http://localhost:5173/?collab=1
+```
+
+## GitHub Pages
+
+The `.github/workflows/pages.yml` workflow builds the Vite app with `VITE_BASE=/<repo-name>/` and deploys `apps/web/dist` via `actions/deploy-pages`. Enable Pages in the repo settings → Pages → Source = "GitHub Actions". The next push triggers a deploy.
+
+The deployed static build runs the full demo (DuckDB-WASM + Mosaic + Semiotic + Vega-Lite + React Flow pipeline view) entirely in the browser. Collab is gated on `?collab=1` — it requires the Fastify server, which Pages doesn't host.
+
+## Tooling
+
+- **Strict TypeScript** — `strict`, `noImplicitAny`, `exactOptionalPropertyTypes`, `noUncheckedIndexedAccess`, `useUnknownInCatchVariables`. ESLint flat config bans `any` and the `no-unsafe-*` family.
+- **pnpm workspace**, Node ≥ 22 LTS.
+- **Vitest** with `jsdom` for unit tests (40 passing as of v0.1).
+- `pnpm test`, `pnpm typecheck`, `pnpm lint`, `pnpm build` are all green.
+
+## Project status
+
+See [`docs/PLAN.md`](./docs/PLAN.md) for the full modernization plan and [`docs/STATUS.md`](./docs/STATUS.md) for the per-phase progress checklist.
 
 ## License
 
-The MIT License (MIT)
-
-Copyright (c) 2018 Sriram Karthik Badam,&nbsp;Andreas Mathisen,&nbsp;Roman Rädle,&nbsp;Clemens Klokmose,&nbsp;and Niklas Elmqvist
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+MIT — original Vistrates copyright 2018 Sriram Karthik Badam, Andreas Mathisen, Roman Rädle, Clemens Klokmose, and Niklas Elmqvist; rebuild 2026.

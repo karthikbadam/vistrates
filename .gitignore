@@ -1,0 +1,13 @@
+node_modules
+dist
+.DS_Store
+.env
+.env.local
+*.log
+.vite
+coverage
+apps/server/data
+apps/server/snapshots
+packages/server/data
+packages/server/snapshots
+.turbo
