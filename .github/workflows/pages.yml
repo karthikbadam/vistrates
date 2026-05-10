@@ -7,8 +7,6 @@ on:
   push:
     branches:
       - main
-      - master
-      - claude/modernize-analytics-platform-ai0FR
   workflow_dispatch:
 
 permissions:
